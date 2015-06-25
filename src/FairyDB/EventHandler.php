@@ -1,7 +1,7 @@
-<?php namespace Pixie;
+<?php namespace FairyDB;
 
-use Pixie\QueryBuilder\QueryBuilderHandler;
-use Pixie\QueryBuilder\Raw;
+use FairyDB\QueryBuilder\QueryBuilderHandler;
+use FairyDB\QueryBuilder\Raw;
 
 class EventHandler
 {

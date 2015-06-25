@@ -1,13 +1,13 @@
-<?php namespace Pixie;
+<?php namespace FairyDB;
 
-use Pixie\QueryBuilder\QueryBuilderHandler;
+use FairyDB\QueryBuilder\QueryBuilderHandler;
 
 /**
  * This class gives the ability to access non-static methods statically
  *
  * Class AliasFacade
  *
- * @package Pixie
+ * @package FairyDB
  */
 class AliasFacade
 {

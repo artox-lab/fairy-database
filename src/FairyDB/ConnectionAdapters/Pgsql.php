@@ -1,6 +1,6 @@
-<?php namespace Pixie\ConnectionAdapters;
+<?php namespace FairyDB\ConnectionAdapters;
 
-class Mysql extends BaseAdapter
+class Pgsql extends BaseAdapter
 {
     /**
      * @param $config
@@ -9,14 +9,10 @@ class Mysql extends BaseAdapter
      */
     protected function doConnect($config)
     {
-        $connectionString = "mysql:host={$config['host']};dbname={$config['database']}";
+        $connectionString = "pgsql:host={$config['host']};dbname={$config['database']}";
 
         if (isset($config['port'])) {
             $connectionString .= ";port={$config['port']}";
-        }
-
-        if (isset($config['unix_socket'])) {
-            $connectionString .= ";unix_socket={$config['unix_socket']}";
         }
 
         $connection = $this->container->build(
@@ -26,6 +22,10 @@ class Mysql extends BaseAdapter
 
         if (isset($config['charset'])) {
             $connection->prepare("SET NAMES '{$config['charset']}'")->execute();
+        }
+
+        if (isset($config['schema'])) {
+            $connection->prepare("SET search_path TO '{$config['schema']}'")->execute();
         }
 
         return $connection;

@@ -1,13 +1,13 @@
-<?php namespace Pixie\QueryBuilder\Adapters;
+<?php namespace FairyDB\QueryBuilder\Adapters;
 
-use Pixie\Connection;
-use Pixie\Exception;
-use Pixie\QueryBuilder\Raw;
+use FairyDB\Connection;
+use FairyDB\Exception;
+use FairyDB\QueryBuilder\Raw;
 
 abstract class BaseAdapter
 {
     /**
-     * @var \Pixie\Connection
+     * @var \FairyDB\Connection
      */
     protected $connection;
 
@@ -375,7 +375,7 @@ abstract class BaseAdapter
 
                 // Build a new NestedCriteria class, keep it by reference so any changes made
                 // in the closure should reflect here
-                $nestedCriteria = $this->container->build('\\Pixie\\QueryBuilder\\NestedCriteria', array($this->connection));
+                $nestedCriteria = $this->container->build('\\FairyDB\\QueryBuilder\\NestedCriteria', array($this->connection));
                 $nestedCriteria = & $nestedCriteria;
                 // Call the closure with our new nestedCriteria object
                 $key($nestedCriteria);

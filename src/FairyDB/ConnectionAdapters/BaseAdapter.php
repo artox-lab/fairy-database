@@ -1,4 +1,4 @@
-<?php namespace Pixie\ConnectionAdapters;
+<?php namespace FairyDB\ConnectionAdapters;
 
 abstract class BaseAdapter
 {
