@@ -1,6 +1,5 @@
 <?php namespace FairyDB\QueryBuilder;
 
-use FairyDB\QueryBuilder\Raw;
 use PDO;
 use FairyDB\Connection;
 use FairyDB\Exception;
