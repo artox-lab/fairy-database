@@ -1,6 +1,6 @@
 <?php namespace FairyDB;
 
-use FairyDB\QueryBuilder\QueryBuilderHandler;
+use FairyDB\QueryBuilder\QueryBuilder;
 use FairyDB\QueryBuilder\Raw;
 
 class EventHandler
@@ -61,7 +61,7 @@ class EventHandler
     }
 
     /**
-     * @param QueryBuilderHandler $queryBuilder
+     * @param QueryBuilder $queryBuilder
      * @param                     $event
      * @return mixed
      */

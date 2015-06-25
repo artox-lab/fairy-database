@@ -1,39 +1,40 @@
 <?php namespace Pixie;
 
+use FairyDB\EventHandler;
 use Mockery as m;
-use Viocon\Container;
 
-class TestCase extends \PHPUnit_Framework_TestCase {
-    /**
-     * @var Container
-     */
-    protected $container;
+class TestCase extends \PHPUnit_Framework_TestCase
+{
     protected $mockConnection;
     protected $mockPdo;
     protected $mockPdoStatement;
 
     public function setUp()
     {
-        $this->container = new Container();
-
         $this->mockPdoStatement = $this->getMock('\\PDOStatement');
 
-        $mockPdoStatement = & $this->mockPdoStatement;
+        $mockPdoStatement = &$this->mockPdoStatement;
 
-        $mockPdoStatement->bindings = array();
+        $mockPdoStatement->bindings = [];
 
         $this->mockPdoStatement
             ->expects($this->any())
             ->method('bindValue')
-            ->will($this->returnCallback(function ($parameter, $value, $dataType) use ($mockPdoStatement) {
-                $mockPdoStatement->bindings[] = array($value, $dataType);
+            ->will($this->returnCallback(function ($parameter, $value, $dataType) use ($mockPdoStatement)
+            {
+                $mockPdoStatement->bindings[] = [
+                    $value,
+                    $dataType
+                ];
             }));
 
         $this->mockPdoStatement
             ->expects($this->any())
             ->method('execute')
-            ->will($this->returnCallback(function($bindings = null) use ($mockPdoStatement) {
-                if ($bindings) {
+            ->will($this->returnCallback(function ($bindings = null) use ($mockPdoStatement)
+            {
+                if ($bindings)
+                {
                     $mockPdoStatement->bindings = $bindings;
                 }
             }));
@@ -42,16 +43,26 @@ class TestCase extends \PHPUnit_Framework_TestCase {
         $this->mockPdoStatement
             ->expects($this->any())
             ->method('fetchAll')
-            ->will($this->returnCallback(function() use ($mockPdoStatement){
-                return array($mockPdoStatement->sql, $mockPdoStatement->bindings);
+            ->will($this->returnCallback(function () use ($mockPdoStatement)
+            {
+                return [
+                    $mockPdoStatement->sql,
+                    $mockPdoStatement->bindings
+                ];
             }));
 
-        $this->mockPdo = $this->getMock('\\Pixie\\MockPdo', array('prepare', 'setAttribute', 'quote', 'lastInsertId'));
+        $this->mockPdo = $this->getMock('\\Pixie\\MockPdo', [
+            'prepare',
+            'setAttribute',
+            'quote',
+            'lastInsertId'
+        ]);
 
         $this->mockPdo
             ->expects($this->any())
             ->method('prepare')
-            ->will($this->returnCallback(function($sql) use ($mockPdoStatement){
+            ->will($this->returnCallback(function ($sql) use ($mockPdoStatement)
+            {
                 $mockPdoStatement->sql = $sql;
                 return $mockPdoStatement;
             }));
@@ -59,7 +70,8 @@ class TestCase extends \PHPUnit_Framework_TestCase {
         $this->mockPdo
             ->expects($this->any())
             ->method('quote')
-            ->will($this->returnCallback(function($value){
+            ->will($this->returnCallback(function ($value)
+            {
                 return "'$value'";
             }));
 
@@ -68,7 +80,7 @@ class TestCase extends \PHPUnit_Framework_TestCase {
         $this->mockConnection = m::mock('\\Pixie\\Connection');
         $this->mockConnection->shouldReceive('getPdoInstance')->andReturn($this->mockPdo);
         $this->mockConnection->shouldReceive('getAdapter')->andReturn('mysql');
-        $this->mockConnection->shouldReceive('getAdapterConfig')->andReturn(array('prefix' => 'cb_'));
+        $this->mockConnection->shouldReceive('getAdapterConfig')->andReturn(['prefix' => 'cb_']);
         $this->mockConnection->shouldReceive('getContainer')->andReturn($this->container);
         $this->mockConnection->shouldReceive('getEventHandler')->andReturn($eventHandler);
     }

@@ -1,16 +1,10 @@
 <?php namespace FairyDB;
 
-use FairyDB\QueryBuilder\Raw;
-use Viocon\Container;
+use FairyDB\ConnectionAdapters\BaseAdapter;
+use FairyDB\QueryBuilder\QueryBuilder;
 
 class Connection
 {
-
-    /**
-     * @var Container
-     */
-    protected $container;
-
     /**
      * @var string
      */
@@ -27,11 +21,6 @@ class Connection
     protected $pdoInstance;
 
     /**
-     * @var Connection
-     */
-    protected static $storedConnection;
-
-    /**
      * @var EventHandler
      */
     protected $eventHandler;
@@ -39,35 +28,15 @@ class Connection
     /**
      * @param               $adapter
      * @param array         $adapterConfig
-     * @param null|string   $alias
-     * @param Container     $container
      */
-    public function __construct($adapter, array $adapterConfig, $alias = null, Container $container = null)
+    public function __construct($adapter, array $adapterConfig)
     {
-        $container = $container ? : new Container();
-
-        $this->container = $container;
-
-        $this->setAdapter($adapter)->setAdapterConfig($adapterConfig)->connect();
+        $this->setAdapter($adapter)
+            ->setAdapterConfig($adapterConfig)
+            ->connect();
 
         // Create event dependency
-        $this->eventHandler = $this->container->build('\\FairyDB\\EventHandler');
-
-        if ($alias) {
-            $this->createAlias($alias);
-        }
-    }
-
-    /**
-     * Create an easily accessible query builder alias
-     *
-     * @param $alias
-     */
-    public function createAlias($alias)
-    {
-        class_alias('FairyDB\\AliasFacade', $alias);
-        $builder = $this->container->build('\\FairyDB\\QueryBuilder\\QueryBuilderHandler', array($this));
-        AliasFacade::setQueryBuilderInstance($builder);
+        $this->eventHandler = new EventHandler();
     }
 
     /**
@@ -75,7 +44,7 @@ class Connection
      */
     public function getQueryBuilder()
     {
-        return $this->container->build('\\FairyDB\\QueryBuilder\\QueryBuilderHandler', array($this));
+        return new QueryBuilder($this);
     }
 
 
@@ -88,15 +57,11 @@ class Connection
 
         $adapter = '\\FairyDB\\ConnectionAdapters\\' . ucfirst(strtolower($this->adapter));
 
-        $adapterInstance = $this->container->build($adapter, array($this->container));
+        /** @var BaseAdapter $adapterInstance */
+        $adapterInstance = new $adapter();
 
         $pdo = $adapterInstance->connect($this->adapterConfig);
         $this->setPdoInstance($pdo);
-
-        // Preserve the first database connection with a static property
-        if (!static::$storedConnection) {
-            static::$storedConnection = $this;
-        }
     }
 
     /**
@@ -157,26 +122,10 @@ class Connection
     }
 
     /**
-     * @return Container
-     */
-    public function getContainer()
-    {
-        return $this->container;
-    }
-
-    /**
      * @return EventHandler
      */
     public function getEventHandler()
     {
         return $this->eventHandler;
-    }
-
-    /**
-     * @return Connection
-     */
-    public static function getStoredConnection()
-    {
-        return static::$storedConnection;
     }
 }

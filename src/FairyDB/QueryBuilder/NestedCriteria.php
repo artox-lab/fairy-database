@@ -1,7 +1,7 @@
 <?php namespace FairyDB\QueryBuilder;
 
 
-class NestedCriteria extends QueryBuilderHandler
+class NestedCriteria extends QueryBuilder
 {
     /**
      * @param        $key

@@ -1,7 +1,7 @@
 <?php namespace FairyDB\QueryBuilder;
 
 
-class JoinBuilder extends QueryBuilderHandler
+class JoinBuilder extends QueryBuilder
 {
     /**
      * @param $key
