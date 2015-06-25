@@ -1,4 +1,4 @@
-<?php namespace Pixie;
+<?php namespace FairyDB;
 
 use FairyDB\EventHandler;
 use Mockery as m;
@@ -51,7 +51,7 @@ class TestCase extends \PHPUnit_Framework_TestCase
                 ];
             }));
 
-        $this->mockPdo = $this->getMock('\\Pixie\\MockPdo', [
+        $this->mockPdo = $this->getMock('\\FairyDB\\MockPdo', [
             'prepare',
             'setAttribute',
             'quote',
@@ -77,7 +77,7 @@ class TestCase extends \PHPUnit_Framework_TestCase
 
         $eventHandler = new EventHandler();
 
-        $this->mockConnection = m::mock('\\Pixie\\Connection');
+        $this->mockConnection = m::mock('\\FairyDB\\Connection');
         $this->mockConnection->shouldReceive('getPdoInstance')->andReturn($this->mockPdo);
         $this->mockConnection->shouldReceive('getAdapter')->andReturn('mysql');
         $this->mockConnection->shouldReceive('getAdapterConfig')->andReturn(['prefix' => 'cb_']);
