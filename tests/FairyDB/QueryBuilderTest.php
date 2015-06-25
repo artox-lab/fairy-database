@@ -2,12 +2,12 @@
 
 use PDO;
 use Mockery as m;
-use FairyDB\QueryBuilder\QueryBuilderHandler;
+use FairyDB\QueryBuilder\QueryBuilder;
 
 class QueryBuilderTest extends TestCase
 {
     /**
-     * @var QueryBuilderHandler
+     * @var QueryBuilder
      */
     protected $builder;
 
@@ -15,7 +15,7 @@ class QueryBuilderTest extends TestCase
     {
         parent::setUp();
 
-        $this->builder = new QueryBuilderHandler($this->mockConnection);
+        $this->builder = new QueryBuilder($this->mockConnection);
     }
 
     public function testRawQuery()

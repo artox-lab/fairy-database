@@ -32,6 +32,6 @@ class ConnectionTest extends TestCase
         $this->container->setInstance('\\FairyDB\\QueryBuilder\\Adapters\\Mysqlmock', $mockQBAdapter);
         $connection = new Connection('mysqlmock', array('prefix' => 'cb_'), 'DBAlias', $this->container);
         $this->assertEquals($this->mockPdo, $connection->getPdoInstance());
-        $this->assertInstanceOf('\\FairyDB\\QueryBuilder\\QueryBuilderHandler', \DBAlias::newQuery());
+        $this->assertInstanceOf('\\FairyDB\\QueryBuilder\\QueryBuilder', \DBAlias::newQuery());
     }
 }

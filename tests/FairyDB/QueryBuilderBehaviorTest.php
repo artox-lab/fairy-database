@@ -2,7 +2,7 @@
 
 use Mockery as m;
 
-class QueryBuilderTest extends TestCase
+class QueryBuilderBehaviorTest extends TestCase
 {
     private $builder;
 
@@ -10,7 +10,7 @@ class QueryBuilderTest extends TestCase
     {
         parent::setUp();
 
-        $this->builder = new QueryBuilder\QueryBuilderHandler($this->mockConnection);
+        $this->builder = new QueryBuilder\QueryBuilder($this->mockConnection);
     }
 
     public function testSelectFlexibility()
@@ -241,7 +241,7 @@ class QueryBuilderTest extends TestCase
 
     public function testDeleteQuery()
     {
-        $this->builder = new QueryBuilder\QueryBuilderHandler($this->mockConnection);
+        $this->builder = new QueryBuilder\QueryBuilder($this->mockConnection);
 
         $builder = $this->builder->table('my_table')->where('value', '=', 'Amrin');
 
