@@ -55,6 +55,8 @@ class ResultsProcessor
             return $results;
         }
 
+        $this->simpleResult = $this->simpleResult || empty($builder->getSelect());
+
         $this->init($builder->getSelect());
 
         if (!$this->simpleResult)
