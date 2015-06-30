@@ -3,6 +3,9 @@
 use FairyDB\ConnectionAdapters\BaseAdapter;
 use FairyDB\QueryBuilder\QueryBuilder;
 
+define('WITH_ONE', 'with_one');
+define('WITH_MANY', 'with_many');
+
 class Connection
 {
     /**
@@ -55,7 +58,7 @@ class Connection
     {
         // Build a database connection if we don't have one connected
 
-        $adapter = '\\FairyDB\\ConnectionAdapters\\' . ucfirst(strtolower($this->adapter));
+        $adapter = '\\FairyDB\\ConnectionAdapters\\' . ucfirst($this->adapter);
 
         /** @var BaseAdapter $adapterInstance */
         $adapterInstance = new $adapter();
@@ -69,7 +72,7 @@ class Connection
      *
      * @return $this
      */
-    public function setPdoInstance(\PDO $pdo)
+    public function setPdoInstance($pdo)
     {
         $this->pdoInstance = $pdo;
         return $this;

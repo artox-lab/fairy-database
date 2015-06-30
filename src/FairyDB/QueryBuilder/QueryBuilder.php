@@ -43,6 +43,10 @@ class QueryBuilder
      */
     protected $fetchParameters = [PDO::FETCH_ASSOC];
 
+    protected $resultsProcessor;
+
+    protected $select = [];
+
     /**
      * @param null|\FairyDB\Connection $connection
      *
@@ -71,6 +75,8 @@ class QueryBuilder
         $this->adapterInstance = new $class($this->connection);
 
         $this->pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+
+        $this->resultsProcessor = new ResultsProcessor();
     }
 
     /**
@@ -153,9 +159,11 @@ class QueryBuilder
     /**
      * Get all rows
      *
-     * @return \stdClass|null
+     * @param bool $simple
+     * @return null|\stdClass
+     * @throws Exception
      */
-    public function get()
+    public function get($simple = false)
     {
         $eventResult = $this->fireEvents('before-select');
         if (!is_null($eventResult))
@@ -180,6 +188,10 @@ class QueryBuilder
         ], $this->fetchParameters);
         $executionTime += microtime(true) - $start;
         $this->pdoStatement = null;
+        if (!$simple)
+        {
+            $result = $this->resultsProcessor->processResult($this, $result);
+        }
         $this->fireEvents('after-select', $result, $executionTime);
         return $result;
     }
@@ -291,7 +303,7 @@ class QueryBuilder
 
         $queryArr = $this->adapterInstance->$type($this->statements, $dataToBePassed);
 
-        return new QueryBuilder($queryArr['sql'], $queryArr['bindings'], $this->pdo);
+        return new QueryObject($queryArr['sql'], $queryArr['bindings'], $this->pdo);
     }
 
     /**
@@ -496,7 +508,11 @@ class QueryBuilder
             $fields = func_get_args();
         }
 
+        $this->select = array_merge_recursive($this->select, $fields);
+
+        $fields = $this->resultsProcessor->columnsCollector($fields);
         $fields = $this->addTablePrefix($fields);
+
         $this->addStatement('selects', $fields);
         return $this;
     }
@@ -952,14 +968,14 @@ class QueryBuilder
             $single = true;
         }
 
-        $return = [];
+        $result = [];
 
         foreach ($values as $key => $value)
         {
             // It's a raw query, just add it to our return array and continue next
             if ($value instanceof Raw || $value instanceof \Closure)
             {
-                $return[$key] = $value;
+                $result[$key] = $value;
                 continue;
             }
 
@@ -972,11 +988,13 @@ class QueryBuilder
                 $target = &$key;
             }
 
-            $result[$key] = preg_replace('/{{([a-z_]+)}}/', $this->tablePrefix . '${1}', $target);
+            $target = preg_replace('/{{([a-z_]+)}}/', $this->tablePrefix . '${1}', $target);
+
+            $result[$key] = $value;
         }
 
         // If we had single value then we should return a single value (end value of the array)
-        return $single ? end($return) : $return;
+        return $single ? end($result) : $result;
     }
 
     /**
@@ -1064,5 +1082,10 @@ class QueryBuilder
     public function getStatements()
     {
         return $this->statements;
+    }
+
+    public function getSelect()
+    {
+        return $this->select;
     }
 }

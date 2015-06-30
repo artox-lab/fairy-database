@@ -1,20 +1,23 @@
 <?php namespace FairyDB;
 
-use Mockery as m;
 class ConnectionTest extends TestCase
 {
     private $mysqlConnectionMock;
     private $connection;
+    private $container;
 
     public function setUp()
     {
         parent::setUp();
 
+        $this->container = new Container();
+
         $this->mysqlConnectionMock = m::mock('\\FairyDB\\ConnectionAdapters\\Mysql');
         $this->mysqlConnectionMock->shouldReceive('connect')->andReturn($this->mockPdo);
 
         $this->container->setInstance('\\FairyDB\\ConnectionAdapters\\Mysqlmock', $this->mysqlConnectionMock);
-        $this->connection = new Connection('mysqlmock', array('prefix' => 'cb_'), null, $this->container);
+        $this->connection = new Connection('mysqlMock', array('prefix' => 'cb_'));
+        $this->connection->setPdoInstance($this->mockPdo);
     }
 
     public function testConnection()
@@ -23,15 +26,5 @@ class ConnectionTest extends TestCase
         $this->assertInstanceOf('\\PDO', $this->connection->getPdoInstance());
         $this->assertEquals('mysqlmock', $this->connection->getAdapter());
         $this->assertEquals(array('prefix' => 'cb_'), $this->connection->getAdapterConfig());
-    }
-
-    public function testQueryBuilderAliasCreatedByConnection()
-    {
-        $mockQBAdapter = m::mock('\\FairyDB\\QueryBuilder\\Adapters\\Mysql');
-
-        $this->container->setInstance('\\FairyDB\\QueryBuilder\\Adapters\\Mysqlmock', $mockQBAdapter);
-        $connection = new Connection('mysqlmock', array('prefix' => 'cb_'), 'DBAlias', $this->container);
-        $this->assertEquals($this->mockPdo, $connection->getPdoInstance());
-        $this->assertInstanceOf('\\FairyDB\\QueryBuilder\\QueryBuilder', \DBAlias::newQuery());
     }
 }
