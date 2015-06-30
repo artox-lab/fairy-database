@@ -1,7 +1,7 @@
 {
-	"name": "artox-lab/fairy-database",
+	"name": "steepdevs/fairy-database",
 	"description": "A lightweight, expressive, framework agnostic query builder for PHP.",
-	"homepage": "https://github.com/artox-lab/fairy-database",
+	"homepage": "https://github.com/steepdevs/fairy-database",
 	"keywords": ["query builder", "sql", "database", "mysql", "postgresql", "sqlite"],
 	"license": "MIT",
 	"minimum-stability": "dev",
