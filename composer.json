@@ -1,6 +1,6 @@
 {
 	"name": "steepdevs/fairy-database",
-	"description": "A lightweight, expressive, framework agnostic query builder for PHP.",
+	"description": "framework query builder for PHP.",
 	"homepage": "https://github.com/steepdevs/fairy-database",
 	"keywords": ["query builder", "sql", "database", "mysql", "postgresql", "sqlite"],
 	"license": "MIT",
