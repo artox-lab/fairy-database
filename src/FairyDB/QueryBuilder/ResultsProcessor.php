@@ -2,7 +2,7 @@
 
 class ResultsProcessor 
 {
-    protected $simpleResult = false;
+    protected $simpleResult = true;
     protected $counters = [];
     protected $indexes = [];
     protected $schemas = [];
@@ -30,8 +30,19 @@ class ResultsProcessor
                         {
                             $arr = array_merge($arr, $this->columnsCollector($column));
                         }
+                        elseif ($column instanceof SelectRaw)
+                        {
+                            $column->setAlias($prefix . '___' . $column->getAlias());
+
+                            $arr[] = $column;
+                        }
                         else
                         {
+                            if ($column instanceof Raw)
+                            {
+                                continue;
+                            }
+
                             $arr[(is_integer($columnKey) ? $prefix . '.' . $column : $columnKey)] = $prefix . '___' . $column;
                         }
                     }
@@ -54,8 +65,6 @@ class ResultsProcessor
         {
             return $results;
         }
-
-        $this->simpleResult = $this->simpleResult || empty($builder->getSelect());
 
         $this->init($builder->getSelect());
 
@@ -96,7 +105,14 @@ class ResultsProcessor
                         continue;
                     }
 
-                    $this->schemas[$fieldKey][$fieldKey . '___' . $attribute] = $attribute;
+                    if ($attribute instanceof SelectRaw)
+                    {
+                        $this->schemas[$fieldKey][$attribute->getAlias()] = str_replace($fieldKey . '___', '', $attribute->getAlias());
+                    }
+                    else
+                    {
+                        $this->schemas[$fieldKey][$fieldKey . '___' . $attribute] = $attribute;
+                    }
                 }
 
                 $this->simpleResult = false;

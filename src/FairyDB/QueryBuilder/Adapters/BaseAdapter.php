@@ -4,6 +4,7 @@ use FairyDB\Connection;
 use FairyDB\Exception;
 use FairyDB\QueryBuilder\NestedCriteria;
 use FairyDB\QueryBuilder\Raw;
+use FairyDB\QueryBuilder\SelectRaw;
 
 abstract class BaseAdapter
 {
@@ -11,6 +12,11 @@ abstract class BaseAdapter
      * @var \FairyDB\Connection
      */
     protected $connection;
+
+    /**
+     * @var string
+     */
+    protected $sanitizer = '`';
 
     public function __construct(Connection $connection)
     {
@@ -40,7 +46,6 @@ abstract class BaseAdapter
         $tables = $this->arrayStr($statements['tables'], ', ');
         // Select
         $selects = $this->arrayStr($statements['selects'], ', ');
-
 
         // Wheres
         list($whereCriteria, $whereBindings) = $this->buildCriteriaWithType($statements, 'wheres', 'WHERE');
@@ -498,6 +503,11 @@ abstract class BaseAdapter
         // Its a raw query, just cast as string, object has __toString()
         if ($value instanceof Raw)
         {
+            if ($value instanceof SelectRaw)
+            {
+                $value = (string)$value . ' AS ' . $this->sanitizer . $value->getAlias() . $this->sanitizer;
+            }
+
             return (string)$value;
         }
         elseif ($value instanceof \Closure)

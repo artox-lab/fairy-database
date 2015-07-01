@@ -886,14 +886,24 @@ class QueryBuilder
      * Add a raw query
      *
      * @param $value
-     * @param $bindings
+     * @param array $bindings
      *
+     * @param string $alias
      * @return mixed
      */
     public function raw($value, $bindings = [])
     {
         return new Raw(
             $value,
+            $bindings
+        );
+    }
+
+    public function selectRaw($value, $alias, $bindings = [])
+    {
+        return new SelectRaw(
+            $value,
+            $alias,
             $bindings
         );
     }

@@ -1,6 +1,7 @@
 <?php namespace FairyDB\QueryBuilder\Adapters;
 
 use FairyDB\QueryBuilder\Raw;
+use FairyDB\QueryBuilder\SelectRaw;
 
 class Mysql extends BaseAdapter
 {
@@ -14,6 +15,11 @@ class Mysql extends BaseAdapter
         // Its a raw query, just cast as string, object has __toString()
         if ($value instanceof Raw)
         {
+            if ($value instanceof SelectRaw)
+            {
+                $value = (string)$value . ' AS ' . $this->sanitizer . $value->getAlias() . $this->sanitizer;
+            }
+
             return (string)$value;
         }
         elseif ($value instanceof \Closure)
