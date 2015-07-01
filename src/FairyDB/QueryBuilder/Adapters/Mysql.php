@@ -27,6 +27,6 @@ class Mysql extends BaseAdapter
             return $value;
         }
 
-        return preg_replace('/(?i)\b((?!as)[a-z_]+)\b/', $this->sanitizer .'${1}' . $this->sanitizer, $value);
+        return preg_replace('/(?i)\b((?!as)[a-z_0-9]+)\b/', $this->sanitizer . '${1}' . $this->sanitizer, $value);
     }
 }

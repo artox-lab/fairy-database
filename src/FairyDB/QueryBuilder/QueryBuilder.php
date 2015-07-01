@@ -510,7 +510,7 @@ class QueryBuilder
 
         $this->select = array_merge_recursive($this->select, $fields);
 
-        $fields = $this->resultsProcessor->columnsCollector($fields);
+        $fields = $this->resultsProcessor->columnsCollector($this->select);
         $fields = $this->addTablePrefix($fields);
 
         $this->addStatement('selects', $fields);

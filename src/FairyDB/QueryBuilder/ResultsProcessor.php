@@ -18,39 +18,46 @@ class ResultsProcessor
 
         foreach ($columns as $key => $info)
         {
-            if (!is_numeric($key) && is_array($info))
+            if (!is_numeric($key))
             {
-                $prefix = $key;
-
-                if (!empty($info))
+                if (is_array($info))
                 {
-                    foreach ($info as $columnKey => $column)
+                    $prefix = $key;
+
+                    if (!empty($info))
                     {
-                        if ($columnKey === WITH_MANY || $columnKey === WITH_ONE)
+                        foreach ($info as $columnKey => $column)
                         {
-                            $arr = array_merge($arr, $this->columnsCollector($column));
-                        }
-                        elseif ($column instanceof SelectRaw)
-                        {
-                            $column->setAlias($prefix . '___' . $column->getAlias());
-
-                            $arr[] = $column;
-                        }
-                        else
-                        {
-                            if ($column instanceof Raw)
+                            if ($columnKey === WITH_MANY || $columnKey === WITH_ONE)
                             {
-                                continue;
+                                $arr = array_merge($arr, $this->columnsCollector($column));
                             }
+                            elseif ($column instanceof SelectRaw)
+                            {
+                                $column->setAlias($prefix . '___' . $column->getAlias());
 
-                            $arr[(is_integer($columnKey) ? $prefix . '.' . $column : $columnKey)] = $prefix . '___' . $column;
+                                $arr[] = $column;
+                            }
+                            else
+                            {
+                                if ($column instanceof Raw)
+                                {
+                                    continue;
+                                }
+
+                                $arr[] = (is_integer($columnKey) ? $prefix . '.' . $column : $columnKey) . ' AS ' . $prefix . '___' . $column;
+                            }
                         }
                     }
+                }
+                else
+                {
+                    $arr[$key] = $info;
                 }
             }
             else
             {
-                $arr[$key] = $info;
+                $arr[] = $info;
             }
         }
 
@@ -148,8 +155,8 @@ class ResultsProcessor
 
         foreach ($this->schemas as $name => $schema)
         {
-            $attributes = array_intersect_key($row, $schema);
             $fields = array_values($schema);
+            $attributes = array_intersect_key($row, $schema);
 
             $entities[$name] = array_combine($fields, $attributes);
         }
