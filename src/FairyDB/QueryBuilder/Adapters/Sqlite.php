@@ -1,4 +1,4 @@
-<?php namespace Pixie\QueryBuilder\Adapters;
+<?php namespace FairyDB\QueryBuilder\Adapters;
 
 
 class Sqlite extends BaseAdapter

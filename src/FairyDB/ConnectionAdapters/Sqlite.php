@@ -1,4 +1,4 @@
-<?php namespace Pixie\ConnectionAdapters;
+<?php namespace FairyDB\ConnectionAdapters;
 
 class Sqlite extends BaseAdapter
 {
@@ -10,9 +10,6 @@ class Sqlite extends BaseAdapter
     public function doConnect($config)
     {
         $connectionString = 'sqlite:' . $config['database'];
-        return $this->container->build(
-            '\PDO',
-            array($connectionString, null, null, $config['options'])
-        );
+        return new \PDO($connectionString, null, null, $config['options']);
     }
 }

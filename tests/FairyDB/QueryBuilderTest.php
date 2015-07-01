@@ -1,13 +1,13 @@
-<?php namespace Pixie;
+<?php namespace FairyDB;
 
 use PDO;
 use Mockery as m;
-use Pixie\QueryBuilder\QueryBuilderHandler;
+use FairyDB\QueryBuilder\QueryBuilder;
 
-class QueryBuilder extends TestCase
+class QueryBuilderTest extends TestCase
 {
     /**
-     * @var QueryBuilderHandler
+     * @var QueryBuilder
      */
     protected $builder;
 
@@ -15,7 +15,7 @@ class QueryBuilder extends TestCase
     {
         parent::setUp();
 
-        $this->builder = new QueryBuilderHandler($this->mockConnection);
+        $this->builder = new QueryBuilder($this->mockConnection);
     }
 
     public function testRawQuery()
@@ -88,7 +88,7 @@ class QueryBuilder extends TestCase
     }
 
     /**
-     * @expectedException \Pixie\Exception
+     * @expectedException \FairyDB\Exception
      * @expectedExceptionCode 3
      */
     public function testTableNotSpecifiedException(){

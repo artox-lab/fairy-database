@@ -1,5 +1,4 @@
-<?php namespace Pixie\QueryBuilder;
-
+<?php namespace FairyDB\QueryBuilder;
 
 class Raw
 {
@@ -14,10 +13,10 @@ class Raw
      */
     protected $bindings;
 
-    public function __construct($value, $bindings = array())
+    public function __construct($value, array $bindings = [])
     {
         $this->value = (string)$value;
-        $this->bindings = (array)$bindings;
+        $this->bindings = $bindings;
     }
 
     public function getBindings()
@@ -32,5 +31,4 @@ class Raw
     {
         return (string)$this->value;
     }
-
 }

@@ -1,25 +1,26 @@
-<?php namespace Pixie\QueryBuilder\Adapters;
+<?php namespace FairyDB\QueryBuilder\Adapters;
 
-use Pixie\Connection;
-use Pixie\Exception;
-use Pixie\QueryBuilder\Raw;
+use FairyDB\Connection;
+use FairyDB\Exception;
+use FairyDB\QueryBuilder\NestedCriteria;
+use FairyDB\QueryBuilder\Raw;
+use FairyDB\QueryBuilder\SelectRaw;
 
 abstract class BaseAdapter
 {
     /**
-     * @var \Pixie\Connection
+     * @var \FairyDB\Connection
      */
     protected $connection;
 
     /**
-     * @var \Viocon\Container
+     * @var string
      */
-    protected $container;
+    protected $sanitizer = '`';
 
     public function __construct(Connection $connection)
     {
         $this->connection = $connection;
-        $this->container = $this->connection->getContainer();
     }
 
     /**
@@ -32,9 +33,12 @@ abstract class BaseAdapter
      */
     public function select($statements)
     {
-        if (!array_key_exists('tables', $statements)) {
+        if (!array_key_exists('tables', $statements))
+        {
             throw new Exception('No table specified.', 3);
-        } elseif (!array_key_exists('selects', $statements)) {
+        }
+        elseif (!array_key_exists('selects', $statements))
+        {
             $statements['selects'][] = '*';
         }
 
@@ -43,23 +47,26 @@ abstract class BaseAdapter
         // Select
         $selects = $this->arrayStr($statements['selects'], ', ');
 
-
         // Wheres
         list($whereCriteria, $whereBindings) = $this->buildCriteriaWithType($statements, 'wheres', 'WHERE');
         // Group bys
         $groupBys = '';
-        if (isset($statements['groupBys']) && $groupBys = $this->arrayStr($statements['groupBys'], ', ')) {
+        if (isset($statements['groupBys']) && $groupBys = $this->arrayStr($statements['groupBys'], ', '))
+        {
             $groupBys = 'GROUP BY ' . $groupBys;
         }
 
         // Order bys
         $orderBys = '';
-        if (isset($statements['orderBys']) && is_array($statements['orderBys'])) {
-            foreach ($statements['orderBys'] as $orderBy) {
+        if (isset($statements['orderBys']) && is_array($statements['orderBys']))
+        {
+            foreach ($statements['orderBys'] as $orderBy)
+            {
                 $orderBys .= $this->wrapSanitizer($orderBy['field']) . ' ' . $orderBy['type'] . ', ';
             }
 
-            if ($orderBys = trim($orderBys, ', ')) {
+            if ($orderBys = trim($orderBys, ', '))
+            {
                 $orderBys = 'ORDER BY ' . $orderBys;
             }
         }
@@ -74,7 +81,7 @@ abstract class BaseAdapter
         // Joins
         $joinString = $this->buildJoin($statements);
 
-        $sqlArray = array(
+        $sqlArray = [
             'SELECT' . (isset($statements['distinct']) ? ' DISTINCT' : ''),
             $selects,
             'FROM',
@@ -86,7 +93,7 @@ abstract class BaseAdapter
             $orderBys,
             $limit,
             $offset
-        );
+        ];
 
         $sql = $this->concatenateQuery($sqlArray);
 
@@ -108,8 +115,9 @@ abstract class BaseAdapter
      */
     public function criteriaOnly($statements, $bindValues = true)
     {
-        $sql = $bindings = array();
-        if (!isset($statements['criteria'])) {
+        $sql = $bindings = [];
+        if (!isset($statements['criteria']))
+        {
             return compact('sql', 'bindings');
         }
 
@@ -129,36 +137,45 @@ abstract class BaseAdapter
      */
     private function doInsert($statements, array $data, $type)
     {
-        if (!isset($statements['tables'])) {
+        if (!isset($statements['tables']))
+        {
             throw new Exception('No table specified', 3);
-        } elseif (count($data) < 1) {
+        }
+        elseif (count($data) < 1)
+        {
             throw new Exception('No data given.', 4);
         }
 
         $table = end($statements['tables']);
 
-        $bindings = $keys = $values = array();
+        $bindings = $keys = $values = [];
 
-        foreach ($data as $key => $value) {
+        foreach ($data as $key => $value)
+        {
             $keys[] = $key;
-            if ($value instanceof Raw) {
-                $values[] = (string) $value;
-            } else {
-                $values[] =  '?';
+            if ($value instanceof Raw)
+            {
+                $values[] = (string)$value;
+            }
+            else
+            {
+                $values[] = '?';
                 $bindings[] = $value;
             }
         }
 
-        $sqlArray = array(
+        $sqlArray = [
             $type . ' INTO',
             $this->wrapSanitizer($table),
             '(' . $this->arrayStr($keys, ',') . ')',
             'VALUES',
             '(' . $this->arrayStr($values, ',', false) . ')',
-        );
+        ];
 
-        if (isset($statements['onduplicate'])) {
-            if (count($statements['onduplicate']) < 1) {
+        if (isset($statements['onduplicate']))
+        {
+            if (count($statements['onduplicate']) < 1)
+            {
                 throw new Exception('No data given.', 4);
             }
             list($updateStatement, $updateBindings) = $this->getUpdateStatement($statements['onduplicate']);
@@ -222,20 +239,27 @@ abstract class BaseAdapter
      */
     private function getUpdateStatement($data)
     {
-        $bindings = array();
+        $bindings = [];
         $statement = '';
 
-        foreach ($data as $key => $value) {
-            if ($value instanceof Raw) {
+        foreach ($data as $key => $value)
+        {
+            if ($value instanceof Raw)
+            {
                 $statement .= $this->wrapSanitizer($key) . '=' . $value . ',';
-            } else {
+            }
+            else
+            {
                 $statement .= $this->wrapSanitizer($key) . '=?,';
                 $bindings[] = $value;
             }
         }
 
         $statement = trim($statement, ',');
-        return array($statement, $bindings);
+        return [
+            $statement,
+            $bindings
+        ];
     }
 
     /**
@@ -249,9 +273,12 @@ abstract class BaseAdapter
      */
     public function update($statements, array $data)
     {
-        if (!isset($statements['tables'])) {
+        if (!isset($statements['tables']))
+        {
             throw new Exception('No table specified', 3);
-        } elseif (count($data) < 1) {
+        }
+        elseif (count($data) < 1)
+        {
             throw new Exception('No data given.', 4);
         }
 
@@ -266,13 +293,13 @@ abstract class BaseAdapter
         // Limit
         $limit = isset($statements['limit']) ? 'LIMIT ' . $statements['limit'] : '';
 
-        $sqlArray = array(
+        $sqlArray = [
             'UPDATE',
             $this->wrapSanitizer($table),
             'SET ' . $updateStatement,
             $whereCriteria,
             $limit
-        );
+        ];
 
         $sql = $this->concatenateQuery($sqlArray, ' ', false);
 
@@ -290,7 +317,8 @@ abstract class BaseAdapter
      */
     public function delete($statements)
     {
-        if (!isset($statements['tables'])) {
+        if (!isset($statements['tables']))
+        {
             throw new Exception('No table specified', 3);
         }
 
@@ -302,7 +330,11 @@ abstract class BaseAdapter
         // Limit
         $limit = isset($statements['limit']) ? 'LIMIT ' . $statements['limit'] : '';
 
-        $sqlArray = array('DELETE FROM', $this->wrapSanitizer($table), $whereCriteria);
+        $sqlArray = [
+            'DELETE FROM',
+            $this->wrapSanitizer($table),
+            $whereCriteria
+        ];
         $sql = $this->concatenateQuery($sqlArray, ' ', false);
         $bindings = $whereBindings;
 
@@ -315,19 +347,22 @@ abstract class BaseAdapter
      *
      * @param array $pieces
      * @param       $glue
-     * @param bool  $wrapSanitizer
+     * @param bool $wrapSanitizer
      *
      * @return string
      */
     protected function arrayStr(array $pieces, $glue, $wrapSanitizer = true)
     {
         $str = '';
-        foreach ($pieces as $key => $piece) {
-            if ($wrapSanitizer) {
+        foreach ($pieces as $key => $piece)
+        {
+            if ($wrapSanitizer)
+            {
                 $piece = $this->wrapSanitizer($piece);
             }
 
-            if (!is_int($key)) {
+            if (!is_int($key))
+            {
                 $piece = ($wrapSanitizer ? $this->wrapSanitizer($key) : $key) . ' AS ' . $piece;
             }
 
@@ -347,7 +382,9 @@ abstract class BaseAdapter
     protected function concatenateQuery(array $pieces)
     {
         $str = '';
-        foreach ($pieces as $piece) {
+
+        foreach ($pieces as $piece)
+        {
             $str = trim($str) . ' ' . trim($piece);
         }
         return trim($str);
@@ -364,39 +401,49 @@ abstract class BaseAdapter
     protected function buildCriteria($statements, $bindValues = true)
     {
         $criteria = '';
-        $bindings = array();
-        foreach ($statements as $statement) {
+        $bindings = [];
 
+        foreach ($statements as $statement)
+        {
             $key = $this->wrapSanitizer($statement['key']);
             $value = $statement['value'];
 
-            if (is_null($value) && $key instanceof \Closure) {
+            if (is_null($value) && $key instanceof \Closure)
+            {
                 // We have a closure, a nested criteria
-
                 // Build a new NestedCriteria class, keep it by reference so any changes made
                 // in the closure should reflect here
-                $nestedCriteria = $this->container->build('\\Pixie\\QueryBuilder\\NestedCriteria', array($this->connection));
-                $nestedCriteria = & $nestedCriteria;
+                $nestedCriteria = new NestedCriteria($this->connection);
+
+                $nestedCriteria = &$nestedCriteria;
+
                 // Call the closure with our new nestedCriteria object
                 $key($nestedCriteria);
+
                 // Get the criteria only query from the nestedCriteria object
                 $queryObject = $nestedCriteria->getQuery('criteriaOnly', true);
+
                 // Merge the bindings we get from nestedCriteria object
                 $bindings = array_merge($bindings, $queryObject->getBindings());
+
                 // Append the sql we get from the nestedCriteria object
                 $criteria .= $statement['joiner'] . ' (' . $queryObject->getSql() . ') ';
-            } elseif (is_array($value)) {
+            }
+            elseif (is_array($value))
+            {
                 // where_in or between like query
                 $criteria .= $statement['joiner'] . ' ' . $key . ' ' . $statement['operator'];
 
-                switch ($statement['operator']) {
+                switch ($statement['operator'])
+                {
                     case 'BETWEEN':
                         $bindings = array_merge($bindings, $statement['value']);
                         $criteria .= ' ? AND ?';
                         break;
                     default:
                         $valuePlaceholder = '';
-                        foreach ($statement['value'] as $subValue) {
+                        foreach ($statement['value'] as $subValue)
+                        {
                             $valuePlaceholder .= '?, ';
                             $bindings[] = $subValue;
                         }
@@ -405,19 +452,26 @@ abstract class BaseAdapter
                         $criteria .= ' (' . $valuePlaceholder . ') ';
                         break;
                 }
-            } else {
+            }
+            else
+            {
                 // Usual where like criteria
 
-                if (!$bindValues) {
+                if (!$bindValues)
+                {
                     // Specially for joins
 
                     // We are not binding values, lets sanitize then
                     $value = $this->wrapSanitizer($value);
                     $criteria .= $statement['joiner'] . ' ' . $key . ' ' . $statement['operator'] . ' ' . $value . ' ';
-                } elseif ($statement['key'] instanceof Raw) {
+                }
+                elseif ($statement['key'] instanceof Raw)
+                {
                     $criteria .= $statement['joiner'] . ' ' . $key . ' ';
                     $bindings = array_merge($bindings, $statement['key']->getBindings());
-                } else {
+                }
+                else
+                {
                     // For wheres
 
                     $valuePlaceholder = '?';
@@ -429,9 +483,12 @@ abstract class BaseAdapter
         }
 
         // Clear all white spaces, and, or from beginning and white spaces from ending
-        $criteria = preg_replace('/^(\s?AND ?|\s?OR ?)|\s$/i','', $criteria);
+        $criteria = preg_replace('/^(\s?AND ?|\s?OR ?)|\s$/i', '', $criteria);
 
-        return array($criteria, $bindings);
+        return [
+            $criteria,
+            $bindings
+        ];
     }
 
     /**
@@ -444,9 +501,17 @@ abstract class BaseAdapter
     public function wrapSanitizer($value)
     {
         // Its a raw query, just cast as string, object has __toString()
-        if ($value instanceof Raw) {
+        if ($value instanceof Raw)
+        {
+            if ($value instanceof SelectRaw)
+            {
+                $value = (string)$value . ' AS ' . $this->sanitizer . $value->getAlias() . $this->sanitizer;
+            }
+
             return (string)$value;
-        } elseif ($value instanceof \Closure) {
+        }
+        elseif ($value instanceof \Closure)
+        {
             return $value;
         }
 
@@ -454,7 +519,8 @@ abstract class BaseAdapter
         // like my_table.id
         $valueArr = explode('.', $value, 2);
 
-        foreach ($valueArr as $key => $subValue) {
+        foreach ($valueArr as $key => $subValue)
+        {
             // Don't wrap if we have *, which is not a usual field
             $valueArr[$key] = trim($subValue) == '*' ? $subValue : $this->sanitizer . $subValue . $this->sanitizer;
         }
@@ -476,18 +542,23 @@ abstract class BaseAdapter
     protected function buildCriteriaWithType($statements, $key, $type, $bindValues = true)
     {
         $criteria = '';
-        $bindings = array();
+        $bindings = [];
 
-        if (isset($statements[$key])) {
+        if (isset($statements[$key]))
+        {
             // Get the generic/adapter agnostic criteria string from parent
             list($criteria, $bindings) = $this->buildCriteria($statements[$key], $bindValues);
 
-            if ($criteria) {
+            if ($criteria)
+            {
                 $criteria = $type . ' ' . $criteria;
             }
         }
 
-        return array($criteria, $bindings);
+        return [
+            $criteria,
+            $bindings
+        ];
     }
 
     /**
@@ -501,15 +572,24 @@ abstract class BaseAdapter
     {
         $sql = '';
 
-        if (!array_key_exists('joins', $statements) || !is_array($statements['joins'])) {
+        if (!array_key_exists('joins', $statements) || !is_array($statements['joins']))
+        {
             return $sql;
         }
 
-        foreach ($statements['joins'] as $joinArr) {
-            $table = $this->arrayStr((array) $joinArr['table'], '');
+        foreach ($statements['joins'] as $joinArr)
+        {
+            $table = $this->arrayStr((array)$joinArr['table'], '');
             $joinBuilder = $joinArr['joinBuilder'];
 
-            $sqlArr = array($sql, strtoupper($joinArr['type']), 'JOIN', $table, 'ON', $joinBuilder->getQuery('criteriaOnly', false)->getSql());
+            $sqlArr = [
+                $sql,
+                strtoupper($joinArr['type']),
+                'JOIN',
+                $table,
+                'ON',
+                $joinBuilder->getQuery('criteriaOnly', false)->getSql()
+            ];
             $sql = $this->concatenateQuery($sqlArr);
         }
 
