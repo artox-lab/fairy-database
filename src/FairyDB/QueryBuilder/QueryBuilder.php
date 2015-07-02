@@ -142,7 +142,6 @@ class QueryBuilder
         $start = microtime(true);
         $pdoStatement = $this->pdo->prepare($sql);
 
-        print_r($bindings);
         foreach ($bindings as $key => $value)
         {
             $pdoStatement->bindValue(
