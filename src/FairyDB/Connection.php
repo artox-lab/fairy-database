@@ -28,9 +28,11 @@ class Connection
      */
     protected $eventHandler;
 
+    protected $transactionsCount = 0;
+
     /**
      * @param               $adapter
-     * @param array         $adapterConfig
+     * @param array $adapterConfig
      */
     public function __construct($adapter, array $adapterConfig)
     {
@@ -130,5 +132,38 @@ class Connection
     public function getEventHandler()
     {
         return $this->eventHandler;
+    }
+
+    public function beginTransaction()
+    {
+        ++$this->transactionsCount;
+
+        if ($this->transactionsCount == 1)
+        {
+            $this->pdoInstance->beginTransaction();
+        }
+    }
+
+    public function commit()
+    {
+        if ($this->transactionsCount == 1)
+        {
+            $this->pdoInstance->commit();
+        }
+
+        --$this->transactionsCount;
+    }
+
+    public function rollBack()
+    {
+        if ($this->transactionsCount == 1)
+        {
+            $this->transactionsCount = 0;
+            $this->pdoInstance->rollBack();
+        }
+        else
+        {
+            --$this->transactionsCount;
+        }
     }
 }
