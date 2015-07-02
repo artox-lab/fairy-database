@@ -1109,4 +1109,12 @@ class QueryBuilder
     {
         return $this->adapterInstance->insertGetId($this->statements, $values);
     }
+
+    public function exists()
+    {
+        $result = $this->limit(1)->count() > 0;
+        $this->limit(null);
+
+        return $result;
+    }
 }
