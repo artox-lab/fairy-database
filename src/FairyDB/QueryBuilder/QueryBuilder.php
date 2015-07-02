@@ -275,7 +275,7 @@ class QueryBuilder
             unset($this->statements['selects']);
         }
 
-        return isset($row[0]->field) ? (int)$row[0]->field : 0;
+        return isset($row[0]['field']) ? (int)$row[0]['field'] : 0;
     }
 
     /**
@@ -1113,7 +1113,7 @@ class QueryBuilder
     public function exists()
     {
         $result = $this->limit(1)->count() > 0;
-        $this->limit(null);
+        //$this->limit(null);
 
         return $result;
     }
