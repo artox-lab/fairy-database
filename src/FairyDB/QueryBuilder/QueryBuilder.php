@@ -1098,4 +1098,10 @@ class QueryBuilder
     {
         return $this->select;
     }
+
+    public function value($column)
+    {
+        $result = (array) $this->first([$column]);
+        return count($result) > 0 ? reset($result) : null;
+    }
 }
