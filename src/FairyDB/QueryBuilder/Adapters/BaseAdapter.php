@@ -595,4 +595,9 @@ abstract class BaseAdapter
 
         return $sql;
     }
+
+    public function insertGetId($statements, array $data)
+    {
+        return $this->insert($statements, $data);
+    }
 }
