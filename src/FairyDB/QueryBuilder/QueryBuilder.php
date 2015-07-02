@@ -1109,7 +1109,7 @@ class QueryBuilder
 
     public function insertGetId($values)
     {
-        return $this->adapterInstance->insertGetId($this->statements, $values);
+        return $this->insert($values);
     }
 
     public function exists()
