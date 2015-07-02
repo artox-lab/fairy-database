@@ -1024,7 +1024,7 @@ class QueryBuilder
         }
         else
         {
-            $this->statements[$key] = array_merge($this->statements[$key], $value);
+            $this->statements[$key] = array_unique(array_merge($this->statements[$key], $value));
         }
     }
 
