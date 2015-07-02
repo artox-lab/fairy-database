@@ -17,8 +17,8 @@
     },
 
 	"autoload":	{
-		"psr-0": {
-			"Pixie": "src/"
+		"psr-4": {
+			"FairyDB": "src/"
 		}
 	}
 }
