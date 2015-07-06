@@ -1,7 +1,7 @@
-<?php namespace FairyDB;
+<?php namespace Fairy\Connection;
 
-use FairyDB\Query\QueryBuilder;
-use FairyDB\Query\Raw;
+use Fairy\Query\QueryBuilder;
+use Fairy\Query\Raw;
 
 class EventHandler
 {
@@ -85,7 +85,37 @@ class EventHandler
                 unset($handlerParams[1]); // we do not need $event
                 // Add to fired list
                 $this->firedEvents[] = $eventId;
+
+                switch(count($handlerParams))
+                {
+                    case 0:
+                        $action();
+                        break;
+
+                    case 1:
+                        $action($handlerParams[0]);
+                        break;
+
+                    case 2:
+                        $action($handlerParams[0], $handlerParams[1]);
+                        break;
+
+                    case 3:
+                        $action($handlerParams[0], $handlerParams[1], $handlerParams[2]);
+                        break;
+
+                    case 4:
+                        $action($handlerParams[0], $handlerParams[1], $handlerParams[2]);
+                        break;
+
+                    case 5:
+                        $action($handlerParams[0], $handlerParams[1], $handlerParams[2]);
+                        break;
+                }
+
                 $result = call_user_func_array($action, $handlerParams);
+
+
                 if (!is_null($result)) {
                     return $result;
                 };

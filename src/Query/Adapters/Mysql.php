@@ -1,7 +1,7 @@
-<?php namespace FairyDB\Query\Adapters;
+<?php namespace Fairy\Query\Adapters;
 
-use FairyDB\Query\Raw;
-use FairyDB\Query\SelectRaw;
+use Fairy\Query\Raw;
+use Fairy\Query\SelectRaw;
 
 class Mysql extends BaseAdapter
 {

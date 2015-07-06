@@ -1,6 +1,6 @@
-<?php namespace FairyDB;
+<?php namespace Fairy;
 
-use FairyDB\Tests\DbTestCase;
+use Fairy\Tests\DbTestCase;
 
 class NewTest extends DbTestCase
 {

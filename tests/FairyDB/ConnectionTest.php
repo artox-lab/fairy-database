@@ -1,4 +1,4 @@
-<?php namespace FairyDB;
+<?php namespace Fairy;
 
 class ConnectionTest extends TestCase
 {
@@ -12,10 +12,10 @@ class ConnectionTest extends TestCase
 
         $this->container = new Container();
 
-        $this->mysqlConnectionMock = m::mock('\\FairyDB\\ConnectionAdapters\\Mysql');
+        $this->mysqlConnectionMock = m::mock('\\Fairy\\ConnectionAdapters\\Mysql');
         $this->mysqlConnectionMock->shouldReceive('connect')->andReturn($this->mockPdo);
 
-        $this->container->setInstance('\\FairyDB\\ConnectionAdapters\\Mysqlmock', $this->mysqlConnectionMock);
+        $this->container->setInstance('\\Fairy\\ConnectionAdapters\\Mysqlmock', $this->mysqlConnectionMock);
         $this->connection = new Connection('mysqlMock', array('prefix' => 'cb_'));
         $this->connection->setPdoInstance($this->mockPdo);
     }

@@ -1,4 +1,4 @@
-<?php namespace FairyDB\ConnectionAdapters;
+<?php namespace Fairy\Connection\Adapters;
 
 class Sqlite extends BaseAdapter
 {

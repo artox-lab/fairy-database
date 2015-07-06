@@ -1,8 +1,8 @@
-<?php namespace FairyDB;
+<?php namespace Fairy;
 
 use PDO;
 use Mockery as m;
-use FairyDB\Query\QueryBuilder;
+use Fairy\Query\QueryBuilder;
 
 class QueryBuilderTest extends TestCase
 {
@@ -88,7 +88,7 @@ class QueryBuilderTest extends TestCase
     }
 
     /**
-     * @expectedException \FairyDB\Exception
+     * @expectedException \Fairy\Exception
      * @expectedExceptionCode 3
      */
     public function testTableNotSpecifiedException(){

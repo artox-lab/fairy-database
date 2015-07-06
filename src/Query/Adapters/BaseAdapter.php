@@ -1,15 +1,15 @@
-<?php namespace FairyDB\Query\Adapters;
+<?php namespace Fairy\Query\Adapters;
 
-use FairyDB\Connection;
-use FairyDB\Exception;
-use FairyDB\Query\NestedCriteria;
-use FairyDB\Query\Raw;
-use FairyDB\Query\SelectRaw;
+use Fairy\Connection\Connection;
+use Fairy\Exceptions\Exception;
+use Fairy\Query\NestedCriteria;
+use Fairy\Query\Raw;
+use Fairy\Query\SelectRaw;
 
 abstract class BaseAdapter
 {
     /**
-     * @var \FairyDB\Connection
+     * @var \Fairy\Connection\Connection
      */
     protected $connection;
 

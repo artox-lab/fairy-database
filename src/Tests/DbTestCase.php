@@ -1,4 +1,4 @@
-<?php namespace FairyDB\Tests;
+<?php namespace Fairy\Tests;
 
 class DbTestCase extends \PHPUnit_Extensions_Database_TestCase
 {

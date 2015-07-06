@@ -1,8 +1,8 @@
-<?php namespace FairyDB\Query;
+<?php namespace Fairy\Query;
 
 use PDO;
-use FairyDB\Connection;
-use FairyDB\Exception;
+use Fairy\Connection\Connection;
+use Fairy\Exceptions\Exception;
 
 class QueryBuilder
 {
@@ -32,7 +32,7 @@ class QueryBuilder
     protected $tablePrefix = null;
 
     /**
-     * @var \FairyDB\Query\Adapters\BaseAdapter
+     * @var \Fairy\Query\Adapters\BaseAdapter
      */
     protected $adapterInstance;
 
@@ -48,9 +48,9 @@ class QueryBuilder
     protected $select = [];
 
     /**
-     * @param null|\FairyDB\Connection $connection
+     * @param null|\Fairy\Connection\Connection $connection
      *
-     * @throws \FairyDB\Exception
+     * @throws \Fairy\Exceptions\Exception
      */
     public function __construct(Connection $connection = null)
     {
@@ -69,7 +69,7 @@ class QueryBuilder
             $this->tablePrefix = $this->adapterConfig['prefix'];
         }
 
-        $class = '\FairyDB\Query\Adapters\\' . ucfirst($this->adapter);
+        $class = '\Fairy\Query\Adapters\\' . ucfirst($this->adapter);
 
         // Query builder adapter instance
         $this->adapterInstance = new $class($this->connection);
@@ -104,7 +104,7 @@ class QueryBuilder
     }
 
     /**
-     * @param null|\FairyDB\Connection $connection
+     * @param null|\Fairy\Connection\Connection $connection
      *
      * @return static
      */

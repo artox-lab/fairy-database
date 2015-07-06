@@ -1,6 +1,6 @@
-<?php namespace FairyDB\ConnectionAdapters;
+<?php namespace Fairy\Connection\Adapters;
 
-class Pgsql extends BaseAdapter
+class Mysql extends BaseAdapter
 {
     /**
      * @param $config
@@ -9,11 +9,16 @@ class Pgsql extends BaseAdapter
      */
     protected function doConnect($config)
     {
-        $connectionString = 'pgsql:host=' . $config['host'] . ';dbname=' . $config['database'];
+        $connectionString = 'mysql:host=' . $config['host'] . ';dbname=' . $config['database'];
 
-        if (isset($config['port']))
+        if (!empty($config['port']))
         {
             $connectionString .= ';port=' . $config['port'];
+        }
+
+        if (isset($config['unix_socket']))
+        {
+            $connectionString .= ';unix_socket=' . $config['unix_socket'];
         }
 
         $connection = new \PDO($connectionString, $config['username'], $config['password'], $config['options']);
@@ -21,11 +26,6 @@ class Pgsql extends BaseAdapter
         if (isset($config['charset']))
         {
             $connection->prepare('SET NAMES "' . $config['charset'] . '"')->execute();
-        }
-
-        if (isset($config['schema']))
-        {
-            $connection->prepare('SET search_path TO "' . $config['schema'] . '"')->execute();
         }
 
         return $connection;

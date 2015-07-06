@@ -1,4 +1,4 @@
-<?php namespace FairyDB;
+<?php namespace Fairy;
 
 use Mockery as m;
 

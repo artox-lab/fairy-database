@@ -1,7 +1,7 @@
-<?php namespace FairyDB;
+<?php namespace Fairy\Connection;
 
-use FairyDB\ConnectionAdapters\BaseAdapter;
-use FairyDB\Query\QueryBuilder;
+use Fairy\Connection\Adapters\BaseAdapter;
+use Fairy\Query\QueryBuilder;
 
 define('WITH_ONE', 'with_one');
 define('WITH_MANY', 'with_many');
@@ -60,7 +60,7 @@ class Connection
     {
         // Build a database connection if we don't have one connected
 
-        $adapter = '\\FairyDB\\ConnectionAdapters\\' . ucfirst($this->adapter);
+        $adapter = '\\Fairy\\Connection\\Adapters\\' . ucfirst($this->adapter);
 
         /** @var BaseAdapter $adapterInstance */
         $adapterInstance = new $adapter();
@@ -165,5 +165,10 @@ class Connection
         {
             --$this->transactionsCount;
         }
+    }
+
+    public function query()
+    {
+        return new QueryBuilder($this);
     }
 }

@@ -1,4 +1,4 @@
-<?php namespace FairyDB\Query;
+<?php namespace Fairy\Query;
 
 
 class SelectRaw extends Raw

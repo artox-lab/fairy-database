@@ -598,4 +598,4 @@ Here are some cases where Query Events can be extremely helpful:
 ___
 If you find any typo then please edit and send pull request.
 
-&copy; 2015 [Muhammad Usman](http://usman.it/). Licensed under MIT license.
+&copy; 2015 Licensed under MIT license.
