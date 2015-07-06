@@ -1,4 +1,4 @@
-<?php namespace FairyDB\Database;
+<?php namespace FairyDB\Query;
 
 use PDO;
 use FairyDB\Connection;
@@ -32,7 +32,7 @@ class QueryBuilder
     protected $tablePrefix = null;
 
     /**
-     * @var \FairyDB\Database\Adapters\BaseAdapter
+     * @var \FairyDB\Query\Adapters\BaseAdapter
      */
     protected $adapterInstance;
 
@@ -69,7 +69,7 @@ class QueryBuilder
             $this->tablePrefix = $this->adapterConfig['prefix'];
         }
 
-        $class = '\FairyDB\Database\Adapters\\' . ucfirst($this->adapter);
+        $class = '\FairyDB\Query\Adapters\\' . ucfirst($this->adapter);
 
         // Query builder adapter instance
         $this->adapterInstance = new $class($this->connection);

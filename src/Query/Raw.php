@@ -1,4 +1,4 @@
-<?php namespace FairyDB\Database;
+<?php namespace FairyDB\Query;
 
 class Raw
 {
