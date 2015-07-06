@@ -1113,8 +1113,9 @@ class QueryBuilder
 
     public function exists()
     {
+        $limit = $this->statements['limit'];
         $result = $this->limit(1)->count() > 0;
-        //$this->limit(null);
+        $this->limit($limit);
 
         return $result;
     }
