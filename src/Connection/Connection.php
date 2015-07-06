@@ -21,7 +21,7 @@ class Connection
     /**
      * @var \PDO
      */
-    protected $pdoInstance;
+    protected $pdo;
 
     /**
      * @var EventHandler
@@ -66,7 +66,7 @@ class Connection
         $adapterInstance = new $adapter();
 
         $pdo = $adapterInstance->connect($this->adapterConfig);
-        $this->setPdoInstance($pdo);
+        $this->setPdo($pdo);
     }
 
     /**
@@ -74,18 +74,18 @@ class Connection
      *
      * @return $this
      */
-    public function setPdoInstance($pdo)
+    public function setPdo($pdo)
     {
-        $this->pdoInstance = $pdo;
+        $this->pdo = $pdo;
         return $this;
     }
 
     /**
      * @return \PDO
      */
-    public function getPdoInstance()
+    public function getPdo()
     {
-        return $this->pdoInstance;
+        return $this->pdo;
     }
 
     /**
@@ -140,7 +140,7 @@ class Connection
 
         if ($this->transactionsCount == 1)
         {
-            $this->pdoInstance->beginTransaction();
+            $this->pdo->beginTransaction();
         }
     }
 
@@ -148,7 +148,7 @@ class Connection
     {
         if ($this->transactionsCount == 1)
         {
-            $this->pdoInstance->commit();
+            $this->pdo->commit();
         }
 
         --$this->transactionsCount;
@@ -159,7 +159,7 @@ class Connection
         if ($this->transactionsCount == 1)
         {
             $this->transactionsCount = 0;
-            $this->pdoInstance->rollBack();
+            $this->pdo->rollBack();
         }
         else
         {

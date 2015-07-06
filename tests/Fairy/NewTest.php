@@ -10,9 +10,8 @@ class NewTest extends DbTestCase
 
     public function testNew()
     {
-        $this->getConnection();
-        $this->getDataSet();
-        $this->assertTrue(true);
+        $this->assertEquals('mysql', $this->db()->getAdapter());
+        $this->assertEquals($this->pdo(), $this->db()->getPdo());
     }
 
     public function testNew2()

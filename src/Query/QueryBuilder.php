@@ -60,7 +60,7 @@ class QueryBuilder
         }
 
         $this->connection = $connection;
-        $this->pdo = $this->connection->getPdoInstance();
+        $this->pdo = $this->connection->getPdo();
         $this->adapter = $this->connection->getAdapter();
         $this->adapterConfig = $this->connection->getAdapterConfig();
 
@@ -1113,7 +1113,7 @@ class QueryBuilder
 
     public function exists()
     {
-        $limit = $this->statements['limit'];
+        $limit = (isset($this->statements['limit'])) ? $this->statements['limit'] : 0;
         $result = $this->limit(1)->count() > 0;
         $this->limit($limit);
 

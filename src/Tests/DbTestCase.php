@@ -1,34 +1,44 @@
 <?php namespace Fairy\Tests;
 
+use Fairy\DB;
+
 class DbTestCase extends \PHPUnit_Extensions_Database_TestCase
 {
-    const TEST_FIXTURES_DIR = __DIR__ . '/../../../tests/Fixtures';
+    const TEST_FIXTURES_DIR = __DIR__ . '/../../tests/Fixtures';
 
     protected $fixtures = [];
 
-    protected $connection;
+    protected static $connection;
+    protected static $pdo;
+
+    protected static $db;
 
     protected $config = [
-        'dsn' => null,
-        'db' => null,
+        'adapter' => null,
+        'host' => null,
+        'port' => null,
+        'database' => null,
         'username' => null,
         'password' => null,
         'charset' => null,
+        'collation' => null,
     ];
 
     protected $tablePrefix;
 
-    public function __construct($name = null, array $data = array(), $dataName = '')
+    public function __construct($name = null, array $data = [], $dataName = '')
     {
         parent::__construct($name, $data, $dataName);
 
         $this->config = [
+            'adapter' => $GLOBALS['DB_ADAPTER'],
             'host' => $GLOBALS['DB_HOST'],
             'port' => $GLOBALS['DB_PORT'],
-            'db' => $GLOBALS['DB_NAME'],
+            'database' => $GLOBALS['DB_NAME'],
             'username' => $GLOBALS['DB_USERNAME'],
             'password' => $GLOBALS['DB_PASSWORD'],
             'charset' => $GLOBALS['DB_CHARSET'],
+            'collation' => $GLOBALS['DB_COLLATION'],
         ];
 
         $this->tablePrefix = $GLOBALS['DB_TABLE_PREFIX'];
@@ -36,23 +46,14 @@ class DbTestCase extends \PHPUnit_Extensions_Database_TestCase
 
     public function getConnection()
     {
-        if (empty($this->connection))
+        if (empty(self::$connection))
         {
-            $pdo = new \PDO(
-                'mysql:host=' . $this->config['host'] . ';port=' . $this->config['port'] . ';dbname=' . $this->config['db'] . ';charset=' . $this->config['charset'] . ';',
-                $this->config['username'],
-                $this->config['password'],
-                [
-                    \PDO::ATTR_PERSISTENT => true
-                ]
-            );
+            $pdo = $this->pdo();
 
-            $pdo->query('SET NAMES ' . $this->config['charset'] . ';');
-
-            $this->connection = $this->createDefaultDBConnection($pdo, $this->config['db']);
+            self::$connection = $this->createDefaultDBConnection($pdo, $this->config['database']);
         }
 
-        return $this->connection;
+        return self::$connection;
     }
 
     protected function getDataSet(array $fixtures = [])
@@ -93,8 +94,43 @@ class DbTestCase extends \PHPUnit_Extensions_Database_TestCase
             }
         }
 
-        print_r($arrayDataSet);
-
         return $this->createArrayDataSet($arrayDataSet);
+    }
+
+    protected function db()
+    {
+        if (empty(self::$db))
+        {
+            self::$db = new DB($this->config['adapter'], [
+                'host'      => $this->config['host'],
+                'database'  => $this->config['database'],
+                'username'  => $this->config['username'],
+                'password'  => $this->config['password'],
+                'charset'   => $this->config['charset'],
+                'collation' => $this->config['collation'],
+                'prefix'    => $this->tablePrefix,
+            ]);
+        }
+
+        return self::$db;
+    }
+
+    protected function pdo()
+    {
+        if (empty(self::$pdo))
+        {
+            self::$pdo = new \PDO(
+                $this->config['adapter'] . ':host=' . $this->config['host'] . ';port=' . $this->config['port'] . ';dbname=' . $this->config['database'] . ';charset=' . $this->config['charset'] . ';',
+                $this->config['username'],
+                $this->config['password'],
+                [
+                    \PDO::ATTR_PERSISTENT => true
+                ]
+            );
+
+            self::$pdo->query('SET NAMES ' . $this->config['charset'] . ';');
+        }
+
+        return self::$pdo;
     }
 }
