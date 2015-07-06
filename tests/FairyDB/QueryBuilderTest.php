@@ -2,7 +2,7 @@
 
 use PDO;
 use Mockery as m;
-use FairyDB\QueryBuilder\QueryBuilder;
+use FairyDB\Database\QueryBuilder;
 
 class QueryBuilderTest extends TestCase
 {

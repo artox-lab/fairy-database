@@ -1,10 +1,10 @@
-<?php namespace FairyDB\QueryBuilder\Adapters;
+<?php namespace FairyDB\Database\Adapters;
 
 use FairyDB\Connection;
 use FairyDB\Exception;
-use FairyDB\QueryBuilder\NestedCriteria;
-use FairyDB\QueryBuilder\Raw;
-use FairyDB\QueryBuilder\SelectRaw;
+use FairyDB\Database\NestedCriteria;
+use FairyDB\Database\Raw;
+use FairyDB\Database\SelectRaw;
 
 abstract class BaseAdapter
 {

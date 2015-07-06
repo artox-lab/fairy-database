@@ -1,7 +1,7 @@
 <?php namespace FairyDB;
 
-use FairyDB\QueryBuilder\QueryBuilder;
-use FairyDB\QueryBuilder\Raw;
+use FairyDB\Database\QueryBuilder;
+use FairyDB\Database\Raw;
 
 class EventHandler
 {

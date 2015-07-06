@@ -1,7 +1,7 @@
 <?php namespace FairyDB;
 
 use FairyDB\ConnectionAdapters\BaseAdapter;
-use FairyDB\QueryBuilder\QueryBuilder;
+use FairyDB\Database\QueryBuilder;
 
 define('WITH_ONE', 'with_one');
 define('WITH_MANY', 'with_many');

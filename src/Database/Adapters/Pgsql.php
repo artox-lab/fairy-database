@@ -1,4 +1,4 @@
-<?php namespace FairyDB\QueryBuilder\Adapters;
+<?php namespace FairyDB\Database\Adapters;
 
 
 class Pgsql extends BaseAdapter

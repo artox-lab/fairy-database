@@ -1,4 +1,4 @@
-<?php namespace FairyDB\QueryBuilder;
+<?php namespace FairyDB\Database;
 
 
 class QueryObject

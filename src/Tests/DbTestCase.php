@@ -1,7 +1,5 @@
 <?php namespace FairyDB\Tests;
 
-use PHPUnit_Extensions_Database_DataSet_IDataSet;
-
 class DbTestCase extends \PHPUnit_Extensions_Database_TestCase
 {
     const TEST_FIXTURES_DIR = __DIR__ . '/../../../tests/Fixtures';
@@ -55,16 +53,6 @@ class DbTestCase extends \PHPUnit_Extensions_Database_TestCase
         }
 
         return $this->connection;
-    }
-
-    public function setUp()
-    {
-
-    }
-
-    public function tearDown()
-    {
-
     }
 
     protected function getDataSet(array $fixtures = [])
