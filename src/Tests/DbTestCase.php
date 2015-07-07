@@ -61,7 +61,7 @@ class DbTestCase extends \PHPUnit_Extensions_Database_TestCase
 
         foreach ($fixtures as $fixture)
         {
-            $fixtureFilename = (file_exists(self::TEST_FIXTURES_DIR . '/' . $fixture . '.php')) ? self::TEST_FIXTURES_DIR . '/' . $fixture . '.php' : self::TEST_FIXTURES_DIR . '/' . $fixture . '/index.php' ;
+            $fixtureFilename = (file_exists(static::TEST_FIXTURES_DIR . '/' . $fixture . '.php')) ? static::TEST_FIXTURES_DIR . '/' . $fixture . '.php' : static::TEST_FIXTURES_DIR . '/' . $fixture . '/index.php';
 
             if (file_exists($fixtureFilename))
             {
