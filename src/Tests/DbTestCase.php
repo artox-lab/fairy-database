@@ -30,18 +30,7 @@ class DbTestCase extends \PHPUnit_Extensions_Database_TestCase
     {
         parent::__construct($name, $data, $dataName);
 
-        $this->config = [
-            'adapter' => $GLOBALS['DB_ADAPTER'],
-            'host' => $GLOBALS['DB_HOST'],
-            'port' => $GLOBALS['DB_PORT'],
-            'database' => $GLOBALS['DB_NAME'],
-            'username' => $GLOBALS['DB_USERNAME'],
-            'password' => $GLOBALS['DB_PASSWORD'],
-            'charset' => $GLOBALS['DB_CHARSET'],
-            'collation' => $GLOBALS['DB_COLLATION'],
-        ];
-
-        $this->tablePrefix = $GLOBALS['DB_TABLE_PREFIX'];
+        $this->bindConfig();
     }
 
     public function getConnection()
@@ -132,5 +121,21 @@ class DbTestCase extends \PHPUnit_Extensions_Database_TestCase
         }
 
         return self::$pdo;
+    }
+
+    protected function bindConfig()
+    {
+        $this->config = [
+            'adapter' => $GLOBALS['DB_ADAPTER'],
+            'host' => $GLOBALS['DB_HOST'],
+            'port' => $GLOBALS['DB_PORT'],
+            'database' => $GLOBALS['DB_NAME'],
+            'username' => $GLOBALS['DB_USERNAME'],
+            'password' => $GLOBALS['DB_PASSWORD'],
+            'charset' => $GLOBALS['DB_CHARSET'],
+            'collation' => $GLOBALS['DB_COLLATION'],
+        ];
+
+        $this->tablePrefix = $GLOBALS['DB_TABLE_PREFIX'];
     }
 }
