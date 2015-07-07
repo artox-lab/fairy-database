@@ -47,6 +47,8 @@ class QueryBuilder
 
     protected $select = [];
 
+    protected $lastResult;
+
     /**
      * @param null|\Fairy\Connection\Connection $connection
      *
@@ -150,7 +152,7 @@ class QueryBuilder
                 is_int($value) ? PDO::PARAM_INT : PDO::PARAM_STR
             );
         }
-        $pdoStatement->execute();
+        $this->lastResult = $pdoStatement->execute();
         return [
             $pdoStatement,
             microtime(true) - $start
@@ -468,8 +470,7 @@ class QueryBuilder
         list($response, $executionTime) = $this->statement($queryObject->getSql(), $queryObject->getBindings());
         $this->fireEvents('after-delete', $queryObject, $executionTime);
 
-
-        return $response;
+        return $this->lastResult;
     }
 
     /**
