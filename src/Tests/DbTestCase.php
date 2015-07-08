@@ -22,7 +22,7 @@ class DbTestCase extends \PHPUnit_Extensions_Database_TestCase
         'password' => null,
         'charset' => null,
         'collation' => null,
-        'tablePrefix' => ''
+        'prefix' => ''
     ];
 
     public function __construct($name = null, array $data = [], $dataName = '')
@@ -73,7 +73,7 @@ class DbTestCase extends \PHPUnit_Extensions_Database_TestCase
 
                 foreach ($dataSetTables as $table => $data)
                 {
-                    $arrayDataSet[$this->config['tablePrefix'] . $table] = $data;
+                    $arrayDataSet[$this->config['prefix'] . $table] = $data;
                 }
             }
             else
@@ -132,7 +132,7 @@ class DbTestCase extends \PHPUnit_Extensions_Database_TestCase
             'password' => $GLOBALS['DB_PASSWORD'],
             'charset' => $GLOBALS['DB_CHARSET'],
             'collation' => $GLOBALS['DB_COLLATION'],
-            'tablePrefix' => $GLOBALS['DB_TABLE_PREFIX'],
+            'prefix' => $GLOBALS['DB_TABLE_PREFIX'],
             'unixSocket' => $GLOBALS['DB_UNIX_SOCKET']
         ];
     }
