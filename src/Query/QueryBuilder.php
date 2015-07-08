@@ -163,7 +163,7 @@ class QueryBuilder
      * Get all rows
      *
      * @param bool $simple
-     * @return null|\stdClass
+     * @return null|array
      * @throws Exception
      */
     public function get($simple = false)
@@ -215,19 +215,7 @@ class QueryBuilder
      * @param        $value
      * @param string $fieldName
      *
-     * @return null|\stdClass
-     */
-    public function findAll($fieldName, $value)
-    {
-        $this->where($fieldName, '=', $value);
-        return $this->get();
-    }
-
-    /**
-     * @param        $value
-     * @param string $fieldName
-     *
-     * @return null|\stdClass
+     * @return null|array
      */
     public function find($value, $fieldName = 'id')
     {
@@ -380,7 +368,7 @@ class QueryBuilder
      *
      * @return array|string
      */
-    public function insert($data)
+    public function insert(array $data)
     {
         return $this->doInsert($data, 'insert');
     }
@@ -410,7 +398,7 @@ class QueryBuilder
      *
      * @return $this
      */
-    public function update($data)
+    public function update(array $data)
     {
         $eventResult = $this->fireEvents('before-update');
         if (!is_null($eventResult))
@@ -448,7 +436,7 @@ class QueryBuilder
      *
      * @return $this
      */
-    public function onDuplicateKeyUpdate($data)
+    public function onDuplicateKeyUpdate(array $data)
     {
         $this->addStatement('onduplicate', $data);
         return $this;
@@ -625,13 +613,13 @@ class QueryBuilder
     }
 
     /**
-     * @param $key
+     * @param $field
      * @param $operator
      * @param $value
      *
      * @return $this
      */
-    public function where($key, $operator = null, $value = null)
+    public function where($field, $operator = null, $value = null)
     {
         // If two params are given then assume operator is =
         if (func_num_args() == 2)
@@ -639,7 +627,7 @@ class QueryBuilder
             $value = $operator;
             $operator = '=';
         }
-        return $this->_where($key, $operator, $value);
+        return $this->_where($field, $operator, $value);
     }
 
     /**
@@ -1101,15 +1089,22 @@ class QueryBuilder
         return $this->select;
     }
 
-    public function value($column)
+    public function value($field)
     {
-        $result = (array) $this->first([$column]);
+        $result = (array) $this->select($field)->first();
         return count($result) > 0 ? reset($result) : null;
     }
 
-    public function insertGetId($values)
+    public function values($field, $alias = null)
     {
-        return $this->insert($values);
+        $result = $this->select($field)->get();
+
+        return !empty($result) ? array_column($result, (!is_null($alias) ? $alias : $field)) : [];
+    }
+
+    public function insertGetId(array $data)
+    {
+        return $this->insert($data);
     }
 
     public function exists()
