@@ -16,14 +16,10 @@ class Mysql extends BaseDriver
             $connectionString .= ';port=' . $config['port'];
         }
 
-        if (isset($config['unixSocket']))
+        if (!empty($config['unixSocket']))
         {
             $connectionString .= ';unix_socket=' . $config['unixSocket'];
         }
-
-        echo "\n\n\n";
-        print_r($connectionString);
-        echo "\n\n\n";
 
         $connection = new \PDO($connectionString, $config['username'], $config['password'], $config['options']);
 
