@@ -112,7 +112,7 @@ class ResultsProcessor
 
                 if (!in_array('id', $info))
                 {
-                    $info[] = 'id';
+                    array_unshift($info, 'id');
                 }
 
                 foreach ($info as $attribute)
