@@ -22,7 +22,8 @@ class DbTestCase extends \PHPUnit_Extensions_Database_TestCase
         'password' => null,
         'charset' => null,
         'collation' => null,
-        'prefix' => ''
+        'prefix' => '',
+        'unixSocket' => null
     ];
 
     public function __construct($name = null, array $data = [], $dataName = '')
@@ -101,9 +102,9 @@ class DbTestCase extends \PHPUnit_Extensions_Database_TestCase
         {
             $connectionString =  $this->config['adapter'] . ':host=' . $this->config['host'] . ';port=' . $this->config['port'] . ';dbname=' . $this->config['database'] . ';charset=' . $this->config['charset'] . ';';
 
-            if (isset($config['unixSocket']))
+            if (!empty($this->config['unixSocket']))
             {
-                $connectionString .= ';unix_socket=' . $config['unixSocket'];
+                $connectionString .= ';unix_socket=' . $this->config['unixSocket'];
             }
 
             self::$pdo = new \PDO(
