@@ -1,6 +1,6 @@
-<?php namespace Fairy\Connection\Adapters;
+<?php namespace Fairy\Connection\Drivers;
 
-class Mysql extends BaseAdapter
+class Mysql extends BaseDriver
 {
     /**
      * @param $config

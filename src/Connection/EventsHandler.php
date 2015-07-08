@@ -3,7 +3,7 @@
 use Fairy\Query\QueryBuilder;
 use Fairy\Query\Raw;
 
-class EventHandler
+class EventsHandler
 {
     /**
      * @var array

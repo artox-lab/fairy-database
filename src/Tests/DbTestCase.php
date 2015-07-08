@@ -22,9 +22,8 @@ class DbTestCase extends \PHPUnit_Extensions_Database_TestCase
         'password' => null,
         'charset' => null,
         'collation' => null,
+        'tablePrefix' => ''
     ];
-
-    protected $tablePrefix;
 
     public function __construct($name = null, array $data = [], $dataName = '')
     {
@@ -74,7 +73,7 @@ class DbTestCase extends \PHPUnit_Extensions_Database_TestCase
 
                 foreach ($dataSetTables as $table => $data)
                 {
-                    $arrayDataSet[$this->tablePrefix . $table] = $data;
+                    $arrayDataSet[$this->config['tablePrefix'] . $table] = $data;
                 }
             }
             else
@@ -90,15 +89,7 @@ class DbTestCase extends \PHPUnit_Extensions_Database_TestCase
     {
         if (empty(self::$db))
         {
-            self::$db = new DB($this->config['adapter'], [
-                'host'      => $this->config['host'],
-                'database'  => $this->config['database'],
-                'username'  => $this->config['username'],
-                'password'  => $this->config['password'],
-                'charset'   => $this->config['charset'],
-                'collation' => $this->config['collation'],
-                'prefix'    => $this->tablePrefix,
-            ]);
+            self::$db = new DB($this->config['adapter'], $this->config);
         }
 
         return self::$db;
@@ -108,8 +99,15 @@ class DbTestCase extends \PHPUnit_Extensions_Database_TestCase
     {
         if (empty(self::$pdo))
         {
+            $connectionString =  $this->config['adapter'] . ':host=' . $this->config['host'] . ';port=' . $this->config['port'] . ';dbname=' . $this->config['database'] . ';charset=' . $this->config['charset'] . ';';
+
+            if (isset($config['unixSocket']))
+            {
+                $connectionString .= ';unix_socket=' . $config['unixSocket'];
+            }
+
             self::$pdo = new \PDO(
-                $this->config['adapter'] . ':host=' . $this->config['host'] . ';port=' . $this->config['port'] . ';dbname=' . $this->config['database'] . ';charset=' . $this->config['charset'] . ';',
+                $connectionString,
                 $this->config['username'],
                 $this->config['password'],
                 [
@@ -134,8 +132,8 @@ class DbTestCase extends \PHPUnit_Extensions_Database_TestCase
             'password' => $GLOBALS['DB_PASSWORD'],
             'charset' => $GLOBALS['DB_CHARSET'],
             'collation' => $GLOBALS['DB_COLLATION'],
+            'tablePrefix' => $GLOBALS['DB_TABLE_PREFIX'],
+            'unixSocket' => $GLOBALS['DB_UNIX_SOCKET']
         ];
-
-        $this->tablePrefix = $GLOBALS['DB_TABLE_PREFIX'];
     }
 }

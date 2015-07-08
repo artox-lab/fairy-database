@@ -1,6 +1,6 @@
-<?php namespace Fairy\Connection\Adapters;
+<?php namespace Fairy\Connection\Drivers;
 
-class Sqlite extends BaseAdapter
+class Sqlite extends BaseDriver
 {
     /**
      * @param $config

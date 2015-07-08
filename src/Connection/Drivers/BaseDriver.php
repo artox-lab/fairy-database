@@ -1,6 +1,6 @@
-<?php namespace Fairy\Connection\Adapters;
+<?php namespace Fairy\Connection\Drivers;
 
-abstract class BaseAdapter
+abstract class BaseDriver
 {
     /**
      * @param $config

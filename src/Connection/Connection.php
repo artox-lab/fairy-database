@@ -1,6 +1,7 @@
 <?php namespace Fairy\Connection;
 
-use Fairy\Connection\Adapters\BaseAdapter;
+use Fairy\Connection\Drivers\BaseDriver;
+use Fairy\Exceptions\DriverNotAllowedException;
 use Fairy\Query\QueryBuilder;
 
 define('WITH_ONE', 'with_one');
@@ -11,127 +12,42 @@ class Connection
     /**
      * @var string
      */
-    protected $adapter;
+    protected $driver;
 
     /**
      * @var array
      */
-    protected $adapterConfig;
+    protected $config;
 
     /**
      * @var \PDO
      */
     protected $pdo;
 
-    /**
-     * @var EventHandler
-     */
-    protected $eventHandler;
+    /** @var EventsHandler */
+    protected $eventsHandler;
 
     protected $transactionsCount = 0;
 
-    /**
-     * @param               $adapter
-     * @param array $adapterConfig
-     */
-    public function __construct($adapter, array $adapterConfig)
+    protected $allowedDrivers = [
+        'mysql',
+        'pgsql',
+        'sqlite'
+    ];
+
+    public function __construct($driver, $config)
     {
-        $this->setAdapter($adapter)
-            ->setAdapterConfig($adapterConfig)
+        $this->setDriver($driver)
+            ->setConfig($config)
             ->connect();
 
         // Create event dependency
-        $this->eventHandler = new EventHandler();
+        $this->eventsHandler = new EventsHandler();
     }
 
-    /**
-     * Returns an instance of Query Builder
-     */
-    public function getQueryBuilder()
+    public function query()
     {
         return new QueryBuilder($this);
-    }
-
-
-    /**
-     * Create the connection adapter
-     */
-    protected function connect()
-    {
-        // Build a database connection if we don't have one connected
-
-        $adapter = '\\Fairy\\Connection\\Adapters\\' . ucfirst($this->adapter);
-
-        /** @var BaseAdapter $adapterInstance */
-        $adapterInstance = new $adapter();
-
-        $pdo = $adapterInstance->connect($this->adapterConfig);
-        $this->setPdo($pdo);
-    }
-
-    /**
-     * @param \PDO $pdo
-     *
-     * @return $this
-     */
-    public function setPdo($pdo)
-    {
-        $this->pdo = $pdo;
-        return $this;
-    }
-
-    /**
-     * @return \PDO
-     */
-    public function getPdo()
-    {
-        return $this->pdo;
-    }
-
-    /**
-     * @param $adapter
-     *
-     * @return $this
-     */
-    public function setAdapter($adapter)
-    {
-        $this->adapter = $adapter;
-        return $this;
-    }
-
-    /**
-     * @return string
-     */
-    public function getAdapter()
-    {
-        return $this->adapter;
-    }
-
-    /**
-     * @param array $adapterConfig
-     *
-     * @return $this
-     */
-    public function setAdapterConfig(array $adapterConfig)
-    {
-        $this->adapterConfig = $adapterConfig;
-        return $this;
-    }
-
-    /**
-     * @return array
-     */
-    public function getAdapterConfig()
-    {
-        return $this->adapterConfig;
-    }
-
-    /**
-     * @return EventHandler
-     */
-    public function getEventHandler()
-    {
-        return $this->eventHandler;
     }
 
     public function beginTransaction()
@@ -167,8 +83,81 @@ class Connection
         }
     }
 
-    public function query()
+    /**
+     * @param \PDO $pdo
+     *
+     * @return $this
+     */
+    public function setPdo(\PDO $pdo)
     {
-        return new QueryBuilder($this);
+        $this->pdo = $pdo;
+        return $this;
+    }
+
+    /**
+     * @return \PDO
+     */
+    public function getPdo()
+    {
+        return $this->pdo;
+    }
+
+    public function setDriver($driver)
+    {
+        if (!in_array($driver, $this->allowedDrivers))
+        {
+            throw new DriverNotAllowedException($driver, $this->allowedDrivers);
+        }
+
+        $this->driver = $driver;
+
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getDriver()
+    {
+        return $this->driver;
+    }
+
+    /**
+     * @param $config
+     * @return $this
+     */
+    public function setConfig(array $config)
+    {
+        $this->config = $config;
+        return $this;
+    }
+
+    public function getConfig()
+    {
+        return $this->config;
+    }
+
+    /**
+     * @return EventsHandler
+     */
+    public function getEventHandler()
+    {
+        return $this->eventsHandler;
+    }
+
+    /**
+     * Create the connection adapter
+     */
+    protected function connect()
+    {
+        // Build a database connection if we don't have one connected
+
+        $driver = '\\Fairy\\Connection\\Drivers\\' . ucfirst($this->driver);
+
+        /** @var BaseDriver $instance */
+        $instance = new $driver();
+
+        $pdo = $instance->connect($this->config);
+        $this->setPdo($pdo);
     }
 }
