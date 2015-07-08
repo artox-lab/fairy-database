@@ -26,6 +26,11 @@ class ResultsProcessor
 
                     if (!empty($info))
                     {
+                        if (!in_array('id', $info))
+                        {
+                            $info[] = 'id';
+                        }
+
                         foreach ($info as $columnKey => $column)
                         {
                             if ($columnKey === WITH_MANY || $columnKey === WITH_ONE)
@@ -104,6 +109,11 @@ class ResultsProcessor
             if (is_array($info) && !empty($info))
             {
                 $this->schemas[$fieldKey] = [];
+
+                if (!in_array('id', $info))
+                {
+                    $info[] = 'id';
+                }
 
                 foreach ($info as $attribute)
                 {
@@ -201,15 +211,26 @@ class ResultsProcessor
                         $counters[$name][$entities[$name]['id']] = [];
                     }
 
-                    if (in_array('id', $schema))
+                    if (!empty($schema[WITH_MANY]))
                     {
-                        if (!empty($schema[WITH_MANY]))
+                        if (!$relationType)
                         {
-                            if (!$relationType)
+                            $this->process(
+                                $schema[WITH_MANY],
+                                $results[$indexes[$name][$entities[$name]['id']]['index']],
+                                $entities,
+                                $indexes[$name][$entities[$name]['id']],
+                                $counters[$name][$entities[$name]['id']],
+                                WITH_MANY
+                            );
+                        }
+                        else
+                        {
+                            if ($relationType === WITH_MANY)
                             {
                                 $this->process(
                                     $schema[WITH_MANY],
-                                    $results[$indexes[$name][$entities[$name]['id']]['index']],
+                                    $results[$name][$indexes[$name][$entities[$name]['id']]['index']],
                                     $entities,
                                     $indexes[$name][$entities[$name]['id']],
                                     $counters[$name][$entities[$name]['id']],
@@ -218,38 +239,38 @@ class ResultsProcessor
                             }
                             else
                             {
-                                if ($relationType === WITH_MANY)
-                                {
-                                    $this->process(
-                                        $schema[WITH_MANY],
-                                        $results[$name][$indexes[$name][$entities[$name]['id']]['index']],
-                                        $entities,
-                                        $indexes[$name][$entities[$name]['id']],
-                                        $counters[$name][$entities[$name]['id']],
-                                        WITH_MANY
-                                    );
-                                }
-                                else
-                                {
-                                    $this->process(
-                                        $schema[WITH_MANY],
-                                        $results[$name],
-                                        $entities,
-                                        $indexes[$name][$entities[$name]['id']],
-                                        $counters[$name][$entities[$name]['id']],
-                                        WITH_MANY
-                                    );
-                                }
+                                $this->process(
+                                    $schema[WITH_MANY],
+                                    $results[$name],
+                                    $entities,
+                                    $indexes[$name][$entities[$name]['id']],
+                                    $counters[$name][$entities[$name]['id']],
+                                    WITH_MANY
+                                );
                             }
                         }
+                    }
 
-                        if (!empty($schema[WITH_ONE]))
+                    if (!empty($schema[WITH_ONE]))
+                    {
+                        if (!$relationType)
                         {
-                            if (!$relationType)
+                            $this->process(
+                                $schema[WITH_ONE],
+                                $results[$indexes[$name][$entities[$name]['id']]['index']],
+                                $entities,
+                                $indexes[$name][$entities[$name]['id']],
+                                $counters[$name][$entities[$name]['id']],
+                                WITH_ONE
+                            );
+                        }
+                        else
+                        {
+                            if ($relationType === WITH_MANY)
                             {
                                 $this->process(
                                     $schema[WITH_ONE],
-                                    $results[$indexes[$name][$entities[$name]['id']]['index']],
+                                    $results[$name][$indexes[$name][$entities[$name]['id']]['index']],
                                     $entities,
                                     $indexes[$name][$entities[$name]['id']],
                                     $counters[$name][$entities[$name]['id']],
@@ -258,28 +279,14 @@ class ResultsProcessor
                             }
                             else
                             {
-                                if ($relationType === WITH_MANY)
-                                {
-                                    $this->process(
-                                        $schema[WITH_ONE],
-                                        $results[$name][$indexes[$name][$entities[$name]['id']]['index']],
-                                        $entities,
-                                        $indexes[$name][$entities[$name]['id']],
-                                        $counters[$name][$entities[$name]['id']],
-                                        WITH_ONE
-                                    );
-                                }
-                                else
-                                {
-                                    $this->process(
-                                        $schema[WITH_ONE],
-                                        $results[$name],
-                                        $entities,
-                                        $indexes[$name][$entities[$name]['id']],
-                                        $counters[$name][$entities[$name]['id']],
-                                        WITH_ONE
-                                    );
-                                }
+                                $this->process(
+                                    $schema[WITH_ONE],
+                                    $results[$name],
+                                    $entities,
+                                    $indexes[$name][$entities[$name]['id']],
+                                    $counters[$name][$entities[$name]['id']],
+                                    WITH_ONE
+                                );
                             }
                         }
                     }
