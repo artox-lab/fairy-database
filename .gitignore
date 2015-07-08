@@ -5,5 +5,4 @@ composer.lock
 .idea
 test.php
 *~
-tests/configuration.xml
 phpunit.xml
