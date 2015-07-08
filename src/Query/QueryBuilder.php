@@ -63,8 +63,8 @@ class QueryBuilder
 
         $this->connection = $connection;
         $this->pdo = $this->connection->getPdo();
-        $this->adapter = $this->connection->getAdapter();
-        $this->adapterConfig = $this->connection->getAdapterConfig();
+        $this->adapter = $this->connection->getDriver();
+        $this->adapterConfig = $this->connection->getConfig();
 
         if (isset($this->adapterConfig['prefix']))
         {
