@@ -21,6 +21,10 @@ class Mysql extends BaseDriver
             $connectionString .= ';unix_socket=' . $config['unixSocket'];
         }
 
+        echo "\n\n\n";
+        print_r($connectionString);
+        echo "\n\n\n";
+
         $connection = new \PDO($connectionString, $config['username'], $config['password'], $config['options']);
 
         if (isset($config['charset']))
