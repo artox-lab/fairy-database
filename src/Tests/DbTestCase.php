@@ -100,7 +100,7 @@ class DbTestCase extends \PHPUnit_Extensions_Database_TestCase
     {
         if (empty(self::$pdo))
         {
-            $connectionString =  $this->config['adapter'] . ':host=' . $this->config['host'] . ';port=' . $this->config['port'] . ';dbname=' . $this->config['database'] . ';charset=' . $this->config['charset'] . ';';
+            $connectionString =  $this->config['adapter'] . ':host=' . $this->config['host'] . ';port=' . $this->config['port'] . ';dbname=' . $this->config['database'] . ';charset=' . $this->config['charset'];
 
             if (!empty($this->config['unixSocket']))
             {
