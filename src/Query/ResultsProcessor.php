@@ -2,6 +2,8 @@
 
 class ResultsProcessor 
 {
+    const SCHEMA_SEPARATOR = '___';
+
     protected $simpleResult = true;
     protected $counters = [];
     protected $indexes = [];
@@ -39,7 +41,7 @@ class ResultsProcessor
                             }
                             elseif ($column instanceof SelectRaw)
                             {
-                                $column->setAlias($prefix . '___' . $column->getAlias());
+                                $column->setAlias($prefix . self::SCHEMA_SEPARATOR . $column->getAlias());
 
                                 $arr[] = $column;
                             }
@@ -50,7 +52,7 @@ class ResultsProcessor
                                     continue;
                                 }
 
-                                $arr[] = (is_integer($columnKey) ? $prefix . '.' . $column : $columnKey) . ' AS ' . $prefix . '___' . $column;
+                                $arr[] = (is_integer($columnKey) ? $prefix . '.' . $column : $columnKey) . ' AS ' . $prefix . self::SCHEMA_SEPARATOR . $column;
                             }
                         }
                     }
@@ -66,7 +68,7 @@ class ResultsProcessor
             }
         }
 
-        return $arr;
+        return array_unique($arr);
     }
 
     public function processResult(QueryBuilder $builder, $rows)
@@ -124,11 +126,11 @@ class ResultsProcessor
 
                     if ($attribute instanceof SelectRaw)
                     {
-                        $this->schemas[$fieldKey][$attribute->getAlias()] = str_replace($fieldKey . '___', '', $attribute->getAlias());
+                        $this->schemas[$fieldKey][$attribute->getAlias()] = str_replace($fieldKey . self::SCHEMA_SEPARATOR, '', $attribute->getAlias());
                     }
                     else
                     {
-                        $this->schemas[$fieldKey][$fieldKey . '___' . $attribute] = $attribute;
+                        $this->schemas[$fieldKey][$fieldKey . self::SCHEMA_SEPARATOR . $attribute] = $attribute;
                     }
                 }
 

@@ -830,6 +830,8 @@ class QueryBuilder
         // Get the criteria only query from the joinBuilder object
         $this->statements['joins'][] = compact('type', 'table', 'joinBuilder');
 
+        $this->statements['joins'] = array_unique($this->statements['joins'], SORT_REGULAR);
+
         return $this;
     }
 
