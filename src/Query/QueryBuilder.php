@@ -273,7 +273,7 @@ class QueryBuilder
      * @param string $type
      * @param array $dataToBePassed
      *
-     * @return mixed
+     * @return QueryObject
      * @throws Exception
      */
     public function getQuery($type = 'select', $dataToBePassed = [])
