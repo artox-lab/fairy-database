@@ -1,5 +1,12 @@
 <?php
 
+if (!file_exists('../vendor/autoload.php'))
+{
+    throw new \Exception('Не найден файл автолоада классов, видимо Вы забыли установить композер или необходимые пакеты.');
+}
+
+require_once('../vendor/autoload.php');
+
 if (!file_exists(__DIR__ . '/schema.sql'))
 {
     throw new \Exception('Тестовая структура БД не найдена.');
