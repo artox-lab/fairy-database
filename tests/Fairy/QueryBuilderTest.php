@@ -83,6 +83,83 @@ class QueryBuilderTest extends DbTestCase
 
     public function testProcessResultColumnsCollector()
     {
+        $processor = new ResultsProcessor();
 
+        $columns = $processor->columnsCollector([
+            'staff' => [
+                'staff.staff_id' => 'id',
+                'first_name',
+                'last_name',
+                'username'
+            ]
+        ]);
+
+        $this->assertEquals([
+            'staff.staff_id AS staff___id',
+            'staff.first_name AS staff___first_name',
+            'staff.last_name AS staff___last_name',
+            'staff.username AS staff___username',
+        ], $columns);
+
+        $columns = $processor->columnsCollector([
+            'staff' => [
+                'staff.staff_id' => 'id',
+                'first_name',
+                'last_name',
+                'username',
+
+                WITH_ONE => [
+                    'address' => [
+                        'address.address_id' => 'id',
+
+                        WITH_ONE => [
+                            'city' => [
+                                'city.city_id' => 'id',
+                                'city',
+
+                                WITH_ONE => [
+                                    'country' => [
+                                        'country.country_id' => 'id',
+                                        'country'
+                                    ]
+                                ]
+                            ]
+                        ]
+                    ],
+
+                    'store' => [
+                        'store.store_id' => 'id',
+
+                        WITH_ONE => [
+                            'storeAddress' => [
+                                'storeAddress.address_id' => 'id',
+                                'address',
+                                'district',
+                                'phone'
+                            ]
+                        ]
+                    ]
+                ]
+            ]
+        ]);
+
+        $this->assertEquals([
+            'staff.staff_id AS staff___id',
+            'staff.first_name AS staff___first_name',
+            'staff.last_name AS staff___last_name',
+            'staff.username AS staff___username',
+
+            'address.address_id AS address___id',
+            'city.city_id AS city___id',
+            'city.city AS city___city',
+            'country.country_id AS country___id',
+            'country.country AS country___country',
+
+            'store.store_id AS store___id',
+            'storeAddress.address_id AS storeAddress___id',
+            'storeAddress.address AS storeAddress___address',
+            'storeAddress.district AS storeAddress___district',
+            'storeAddress.phone AS storeAddress___phone',
+        ], $columns);
     }
 }
