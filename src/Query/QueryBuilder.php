@@ -141,6 +141,8 @@ class QueryBuilder
      */
     public function statement($sql, $bindings = [])
     {
+        $this->connection->queriesCount++;
+
         $start = microtime(true);
         $pdoStatement = $this->pdo->prepare($sql);
 
@@ -153,6 +155,9 @@ class QueryBuilder
             );
         }
         $this->lastResult = $pdoStatement->execute();
+
+        $this->connection->queriesTime += microtime(true) - $start;
+
         return [
             $pdoStatement,
             microtime(true) - $start

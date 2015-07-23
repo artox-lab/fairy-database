@@ -29,6 +29,9 @@ class Connection
 
     protected $transactionsCount = 0;
 
+    public $queriesCount = 0;
+    public $queriesTime = 0;
+
     protected $allowedDrivers = [
         'mysql',
         'pgsql',
