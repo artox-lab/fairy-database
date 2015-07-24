@@ -29,7 +29,7 @@ class Connection
 
     protected $transactionsCount = 0;
 
-    public $queriesCount = 0;
+    public $queries = [];
     public $queriesTime = 0;
 
     protected $allowedDrivers = [

@@ -71,7 +71,7 @@ Pixie uses [Composer](http://getcomposer.org/doc/00-intro.md#installation-nix) t
 
 Learn to use composer and add this to require section (in your composer.json):
 
-    "artox-lab/fairy-database": "1.0.5"
+    "artox-lab/fairy-database": "1.0.6"
 
 And run:
 
