@@ -666,19 +666,6 @@ class QueryBuilder
             $operator = '=';
         }
 
-        if (is_null($value))
-        {
-            if ($operator == '=')
-            {
-                return $this->whereNull($field);
-            }
-
-            if ($operator == '!=' || $operator == '<>')
-            {
-                return $this->whereNotNull($field);
-            }
-        }
-
         return $this->_where($field, $operator, $value);
     }
 
