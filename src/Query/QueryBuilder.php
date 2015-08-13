@@ -449,7 +449,7 @@ class QueryBuilder
         list($response, $executionTime) = $this->statement($queryObject->getSql(), $queryObject->getBindings());
         $this->fireEvents('after-update', $queryObject, $executionTime);
 
-        return $this->lastResult;
+        return $response->rowCount();
     }
 
     /**
