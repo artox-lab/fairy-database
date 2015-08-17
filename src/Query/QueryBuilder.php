@@ -153,10 +153,48 @@ class QueryBuilder
             );
         }
         $this->lastResult = $pdoStatement->execute();
+
+        $this->connection->queriesTime += microtime(true) - $start;
+        $this->logQuery($sql, $bindings);
+
         return [
             $pdoStatement,
             microtime(true) - $start
         ];
+    }
+
+    /**
+     * Log SQL Query with params
+     *
+     * @param string $sql
+     * @param string $bindings
+     */
+    private function logQuery($sql, $bindings)
+    {
+        // Binding params
+        $query = '';
+        $bindingIndex = $pos = 0;
+        $length = strlen($sql);
+        while ($pos < $length)
+        {
+            if ($sql[$pos] == '?')
+            {
+                $query .= is_int($bindings[$bindingIndex]) ? $bindings[$bindingIndex] : "'$bindings[$bindingIndex]'";
+                $bindingIndex++;
+            }
+            else
+            {
+                $query .= $sql[$pos];
+            }
+            $pos++;
+        }
+
+        // Save query to log
+        if (!isset($this->connection->queries[$query]))
+        {
+            $this->connection->queries[$query] = 0;
+        }
+        $this->connection->queries[$query]++;
     }
 
     /**
@@ -409,7 +447,7 @@ class QueryBuilder
         list($response, $executionTime) = $this->statement($queryObject->getSql(), $queryObject->getBindings());
         $this->fireEvents('after-update', $queryObject, $executionTime);
 
-        return $response;
+        return $response->rowCount();
     }
 
     /**
@@ -625,6 +663,7 @@ class QueryBuilder
             $value = $operator;
             $operator = '=';
         }
+
         return $this->_where($field, $operator, $value);
     }
 
