@@ -290,7 +290,7 @@ class QueryBuilder
         $mainSelects = isset($this->statements['selects']) ? $this->statements['selects'] : null;
         // Replace select with a scalar value like `count`
         $this->statements['selects'] = [$this->raw($type . '(*) as field')];
-        $row = $this->get();
+        $row = $this->get()->plain();
 
         // Set the select as it was
         if ($mainSelects)

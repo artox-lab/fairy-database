@@ -11,7 +11,7 @@ class QueryResponse
     {
         $this->select = $select;
         $this->resultsProcessor = $resultsProcessor;
-        $this->result = $results;
+        $this->results = $results;
     }
 
     public function plain()
