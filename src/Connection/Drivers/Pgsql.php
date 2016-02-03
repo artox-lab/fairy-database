@@ -1,6 +1,6 @@
 <?php namespace Fairy\Connection\Drivers;
 
-class Pgsql extends BaseDrivers
+class Pgsql extends BaseDriver
 {
     /**
      * @param $config
