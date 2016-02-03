@@ -200,11 +200,10 @@ class QueryBuilder
     /**
      * Get all rows
      *
-     * @param bool $simple
-     * @return null|array
+     * @return QueryResponse
      * @throws Exception
      */
-    public function get($simple = false)
+    public function get()
     {
         $eventResult = $this->fireEvents('before-select');
         if (!is_null($eventResult))
@@ -229,11 +228,10 @@ class QueryBuilder
         ], $this->fetchParameters);
         $executionTime += microtime(true) - $start;
         $this->pdoStatement = null;
-        if (!$simple)
-        {
-            $result = $this->resultsProcessor->processResult($this, $result);
-        }
+
+        $result = new QueryResponse($this->select, $this->resultsProcessor, $result);
         $this->fireEvents('after-select', $result, $executionTime);
+
         return $result;
     }
 
@@ -245,7 +243,7 @@ class QueryBuilder
     public function first()
     {
         $this->limit(1);
-        $result = $this->get();
+        $result = $this->get()->formatted();
         return empty($result) ? null : $result[0];
     }
 
@@ -292,7 +290,7 @@ class QueryBuilder
         $mainSelects = isset($this->statements['selects']) ? $this->statements['selects'] : null;
         // Replace select with a scalar value like `count`
         $this->statements['selects'] = [$this->raw($type . '(*) as field')];
-        $row = $this->get();
+        $row = $this->get()->plain();
 
         // Set the select as it was
         if ($mainSelects)
@@ -1125,11 +1123,6 @@ class QueryBuilder
         return $this->statements;
     }
 
-    public function getSelect()
-    {
-        return $this->select;
-    }
-
     public function value($field)
     {
         $result = (array) $this->select($field)->first();
@@ -1138,7 +1131,7 @@ class QueryBuilder
 
     public function values($field, $alias = null)
     {
-        $result = $this->select($field)->get();
+        $result = $this->select($field)->get()->formatted();
 
         return !empty($result) ? array_column($result, (!is_null($alias) ? $alias : $field)) : [];
     }

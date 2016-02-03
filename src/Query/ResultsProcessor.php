@@ -71,7 +71,7 @@ class ResultsProcessor
         return array_unique($arr);
     }
 
-    public function processResult(QueryBuilder $builder, $rows)
+    public function processResult($select, $rows)
     {
         $results = [];
 
@@ -80,7 +80,7 @@ class ResultsProcessor
             return $results;
         }
 
-        $this->init($builder->getSelect());
+        $this->init($select);
 
         if (!$this->simpleResult)
         {
@@ -88,7 +88,7 @@ class ResultsProcessor
             {
                 $row = array_shift($rows);
 
-                $results = $this->process($builder->getSelect(), $results, $this->getEntitiesFromRow($row), $this->indexes, $this->counters);
+                $results = $this->process($select, $results, $this->getEntitiesFromRow($row), $this->indexes, $this->counters);
             }
         }
         else
@@ -173,6 +173,11 @@ class ResultsProcessor
             $entities[$name] = array_combine($fields, $attributes);
         }
 
+        $entities = array_filter($entities, function ($entity)
+        {
+           return !empty($entity['id']);
+        });
+
         return $entities;
     }
 
@@ -184,6 +189,11 @@ class ResultsProcessor
             {
                 if (is_array($schema))
                 {
+                    if (!isset($entities[$name]))
+                    {
+                        continue;
+                    }
+
                     if (!isset($indexes[$name][$entities[$name]['id']]))
                     {
                         if (!isset($counters[$name]['counter']))
@@ -217,6 +227,11 @@ class ResultsProcessor
                     {
                         if (!$relationType)
                         {
+                            /*print_r($entities);
+                            print_r($schema[WITH_MANY]);
+                            print_r($results[$indexes[$name][$entities[$name]['id']]['index']]);
+                            die();*/
+
                             $this->process(
                                 $schema[WITH_MANY],
                                 $results[$indexes[$name][$entities[$name]['id']]['index']],
