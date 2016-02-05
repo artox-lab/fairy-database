@@ -6,6 +6,8 @@ use Fairy\Exceptions\Exception;
 
 class QueryBuilder
 {
+    const PGSQL_SEQUENCE_NAME_SUFFIX = '_id_seq';
+
     /**
      * @var Connection
      */
@@ -363,6 +365,9 @@ class QueryBuilder
             return $eventResult;
         }
 
+        // Если у нас коннект к pgsql для возвращения вставленной ID надо передать name последовательности, см. http://php.net/manual/ru/pdo.lastinsertid.php
+        $name = ($this->adapter === 'pgsql') ? $this->statements['tables'][0] . self::PGSQL_SEQUENCE_NAME_SUFFIX : null;
+
         // If first value is not an array
         // Its not a batch insert
         if (!is_array(current($data)))
@@ -372,7 +377,7 @@ class QueryBuilder
 
             list($result, $executionTime) = $this->statement($queryObject->getSql(), $queryObject->getBindings());
 
-            $return = $result->rowCount() === 1 ? $this->pdo->lastInsertId() : null;
+            $return = $result->rowCount() === 1 ? $this->pdo->lastInsertId($name) : null;
         }
         else
         {
@@ -389,7 +394,7 @@ class QueryBuilder
 
                 if ($result->rowCount() === 1)
                 {
-                    $return[] = $this->pdo->lastInsertId();
+                    $return[] = $this->pdo->lastInsertId($name);
                 }
             }
         }
